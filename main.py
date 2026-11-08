@@ -18,11 +18,11 @@ LARGURA_BLOCO_CHAO = 330
 janela = pygame.display.set_mode((LARGURA,ALTURA))
 pygame.display.set_caption("Meu Jogo")
 
-
 img_player = pygame.image.load("Assets/Imgs/Jogador.jpeg")
 img_player = pygame.transform.scale(img_player, (TAMANHO_JOGADOR, TAMANHO_JOGADOR))
 img_chao = pygame.image.load("Assets/Imgs/chao_futurista.png")
 img_chao = pygame.transform.scale(img_chao,(LARGURA_BLOCO_CHAO,ALTURA_CHAO))
+
 
 class jogador(pygame.sprite.Sprite):
     def __init__(self, imagem):
@@ -56,6 +56,8 @@ jogo = True
 
 relogio = pygame.time.Clock()
 
+deslocamento_chao = 0 
+
 while jogo:
     relogio.tick(FPS)
 
@@ -68,10 +70,16 @@ while jogo:
                 player.jump()
                 
     all_sprites.update()
+    deslocamento_chao -= VELOCIDADE_CENARIO
+    if deslocamento_chao<= -LARGURA_BLOCO_CHAO:
+        deslocamento_chao+=LARGURA_BLOCO_CHAO
+    
     janela.fill((8, 12, 32))
-    for i in range(0,1100,330): 
-        janela.blit(img_chao,(i,ALTURA - ALTURA_CHAO))
+
+    for i in range(0,LARGURA+LARGURA_BLOCO_CHAO,LARGURA_BLOCO_CHAO): 
+        janela.blit(img_chao,(i+deslocamento_chao,ALTURA - ALTURA_CHAO))
+
     all_sprites.draw(janela)
     pygame.display.update()
 
-pygame.quit()
+pygame.quit()   
