@@ -2,12 +2,17 @@ import pygame
 
 pygame.init()
 
+#Medidas da tela
 LARGURA = 1100
 ALTURA = 700
-ALTURA_CHAO = 110
+
+#Outras constantes
+ALTURA_CHAO = 200
 TAMANHO_JOGADOR = 50
-GRAVIDADE = 0.8
-VELOCIDADE_PULO = -15
+GRAVIDADE = 1
+VELOCIDADE_PULO = -18
+VELOCIDADE_CENARIO = 6
+LARGURA_BLOCO_CHAO = 330
 
 
 janela = pygame.display.set_mode((LARGURA,ALTURA))
@@ -16,13 +21,15 @@ pygame.display.set_caption("Meu Jogo")
 
 img_player = pygame.image.load("Assets/Imgs/Jogador.jpeg")
 img_player = pygame.transform.scale(img_player, (TAMANHO_JOGADOR, TAMANHO_JOGADOR))
+img_chao = pygame.image.load("Assets/Imgs/chao_futurista.png")
+img_chao = pygame.transform.scale(img_chao,(LARGURA_BLOCO_CHAO,ALTURA_CHAO))
 
 class jogador(pygame.sprite.Sprite):
     def __init__(self, imagem):
         pygame.sprite.Sprite.__init__(self)
         self.image = imagem
         self.rect = self.image.get_rect()
-        self.rect.x = 150
+        self.rect.x = 200
         self.rect.bottom = ALTURA-ALTURA_CHAO
         self.velocidade_y = 0
 
@@ -33,7 +40,6 @@ class jogador(pygame.sprite.Sprite):
         if self.rect.bottom >= ALTURA - ALTURA_CHAO:
             self.rect.bottom = ALTURA - ALTURA_CHAO
             self.velocidade_y = 0
-
 
     def jump(self):
 
@@ -63,7 +69,8 @@ while jogo:
                 
     all_sprites.update()
     janela.fill((8, 12, 32))
-    pygame.draw.rect(janela,(30,75,40),(0,(ALTURA-ALTURA_CHAO),LARGURA,ALTURA_CHAO))
+    for i in range(0,1100,330): 
+        janela.blit(img_chao,(i,ALTURA - ALTURA_CHAO))
     all_sprites.draw(janela)
     pygame.display.update()
 
