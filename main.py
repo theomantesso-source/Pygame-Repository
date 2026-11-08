@@ -57,6 +57,7 @@ jogo = True
 relogio = pygame.time.Clock()
 
 deslocamento_chao = 0 
+keydown = False
 
 while jogo:
     relogio.tick(FPS)
@@ -67,8 +68,15 @@ while jogo:
 
         if evento.type == pygame.KEYDOWN:
             if evento.key == pygame.K_SPACE:
-                player.jump()
-                
+                keydown = True
+
+        if evento.type == pygame.KEYUP:
+            if evento.key == pygame.K_SPACE:
+                keydown = False
+        
+    if keydown == True:
+        player.jump()
+        
     all_sprites.update()
     deslocamento_chao -= VELOCIDADE_CENARIO
     if deslocamento_chao<= -LARGURA_BLOCO_CHAO:
