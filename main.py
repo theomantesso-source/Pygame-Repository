@@ -76,7 +76,7 @@ while jogo:
         
     if keydown == True:
         player.jump()
-        
+
     all_sprites.update()
     deslocamento_chao -= VELOCIDADE_CENARIO
     if deslocamento_chao<= -LARGURA_BLOCO_CHAO:
