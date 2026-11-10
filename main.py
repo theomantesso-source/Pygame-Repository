@@ -109,10 +109,13 @@ def fase_dificil(janela):
         all_sprites.add(espinho)
         all_espinhos.add(espinho)
 
-    plataforma = Plataforma(img_chao,2300,400,100,40)
+    posicoes_plataformas = [(2300, 400),(2500, 300),(2700, 200)]
 
-    all_sprites.add(plataforma)
-    all_plataforma.add(plataforma)
+    for x, y in posicoes_plataformas:
+        plataforma = Plataforma(img_chao, x, y, 100, 40)
+        all_sprites.add(plataforma)
+        all_plataforma.add(plataforma)
+
     while jogo:
         relogio.tick(FPS)
 
