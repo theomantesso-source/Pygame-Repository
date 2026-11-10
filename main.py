@@ -11,7 +11,7 @@ ALTURA_CHAO = 200
 TAMANHO_JOGADOR = 50
 GRAVIDADE = 4
 VELOCIDADE_PULO = -36
-VELOCIDADE_CENARIO = 12
+VELOCIDADE_CENARIO = 14
 LARGURA_BLOCO_CHAO = 330
 LARGURA_ESPINHO = 40
 ALTURA_ESPINHO = 45
@@ -29,18 +29,24 @@ class jogador(pygame.sprite.Sprite):
         self.rect.x = 200
         self.rect.bottom = ALTURA - ALTURA_CHAO
         self.velocidade_y = 0
+        self.apoiado = True
 
     def update(self):
+        self.base_anterior = self.rect.bottom
+        self.apoiado = False
+
         self.velocidade_y += GRAVIDADE
         self.rect.y += self.velocidade_y
 
         if self.rect.bottom >= ALTURA - ALTURA_CHAO:
             self.rect.bottom = ALTURA - ALTURA_CHAO
             self.velocidade_y = 0
+            self.apoiado = True
 
     def jump(self):
-        if self.rect.bottom == ALTURA - ALTURA_CHAO:
+        if self.apoiado:
             self.velocidade_y = VELOCIDADE_PULO
+            self.apoiado = False
         
 
 
@@ -64,7 +70,15 @@ class Plataforma(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.transform.scale(imagem,(largura,altura))
         self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y     
 
+    def update(self):
+        self.rect.x -= VELOCIDADE_CENARIO
+        if self.rect.right<0:
+            self.kill()
+        
+    
 def fase_dificil(janela):
     img_player = pygame.image.load("Assets/Imgs/Jogador.jpeg")
     img_player = pygame.transform.scale(img_player, (TAMANHO_JOGADOR, TAMANHO_JOGADOR))
@@ -77,7 +91,10 @@ def fase_dificil(janela):
     player = jogador(img_player)
     all_sprites = pygame.sprite.Group()
     all_espinhos = pygame.sprite.Group()
+    all_plataforma = pygame.sprite.Group()
     all_sprites.add(player)
+
+
 
     FPS = 30
     jogo = True
@@ -91,7 +108,11 @@ def fase_dificil(janela):
         espinho = Espinho(img_espinho,x)
         all_sprites.add(espinho)
         all_espinhos.add(espinho)
-   
+
+    plataforma = Plataforma(img_chao,2300,400,100,40)
+
+    all_sprites.add(plataforma)
+    all_plataforma.add(plataforma)
     while jogo:
         relogio.tick(FPS)
 
@@ -111,6 +132,12 @@ def fase_dificil(janela):
             player.jump()
 
         all_sprites.update()
+        for plataforma in all_plataforma:
+            if (player.velocidade_y >= 0 and player.rect.right > plataforma.rect.left and player.rect.left < plataforma.rect.right and player.base_anterior <= plataforma.rect.top and player.rect.bottom >= plataforma.rect.top):
+                player.rect.bottom = plataforma.rect.top
+                player.velocidade_y = 0
+                player.apoiado = True
+                break   
         colisoes = pygame.sprite.spritecollide(player,all_espinhos,False,pygame.sprite.collide_mask)    
         if colisoes !=[]:
             return "perdeu"
