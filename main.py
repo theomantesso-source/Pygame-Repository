@@ -45,19 +45,19 @@ class jogador(pygame.sprite.Sprite):
 
 
 class Espinho(pygame.sprite.Sprite):
-    def __init__(self, imagem):
+    def __init__(self, imagem, x):
         pygame.sprite.Sprite.__init__(self)
         self.image = imagem
         self.rect = self.image.get_rect()
-        self.rect.x = 700
+        self.rect.x = x
         self.rect.bottom = ALTURA-ALTURA_CHAO
         self.mask = pygame.mask.from_surface(self.image)
 
     def update(self):
         self.rect.x-=VELOCIDADE_CENARIO
         if self.rect.x<-LARGURA_ESPINHO:
-            self.rect.x = LARGURA
-
+            self.kill()
+    
 
 def fase_dificil(janela):
     img_player = pygame.image.load("Assets/Imgs/Jogador.jpeg")
@@ -68,13 +68,10 @@ def fase_dificil(janela):
     img_espinho = pygame.transform.scale(img_espinho,(LARGURA_ESPINHO,ALTURA_ESPINHO))
 
 
-    espinho = Espinho(img_espinho)
     player = jogador(img_player)
     all_sprites = pygame.sprite.Group()
     all_espinhos = pygame.sprite.Group()
-    all_espinhos.add(espinho)
     all_sprites.add(player)
-    all_sprites.add(espinho)
 
     FPS = 30
     jogo = True
@@ -83,6 +80,12 @@ def fase_dificil(janela):
     deslocamento_chao = 0
     keydown = False
 
+    posicoes_espinhos = [700,1200,1700]
+    for x in posicoes_espinhos:
+        espinho = Espinho(img_espinho,x)
+        all_sprites.add(espinho)
+        all_espinhos.add(espinho)
+    
     while jogo:
         relogio.tick(FPS)
 
@@ -104,9 +107,7 @@ def fase_dificil(janela):
         all_sprites.update()
         colisoes = pygame.sprite.spritecollide(player,all_espinhos,False,pygame.sprite.collide_mask)    
         if colisoes !=[]:
-            print("Bateu!!")
-            for obstaculo in colisoes:
-                obstaculo.rect.x = LARGURA
+            return "perdeu"
         
         deslocamento_chao -= VELOCIDADE_CENARIO
         if deslocamento_chao <= -LARGURA_BLOCO_CHAO:
