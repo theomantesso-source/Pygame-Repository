@@ -57,7 +57,13 @@ class Espinho(pygame.sprite.Sprite):
         self.rect.x-=VELOCIDADE_CENARIO
         if self.rect.x<-LARGURA_ESPINHO:
             self.kill()
-    
+
+
+class Plataforma(pygame.sprite.Sprite):
+    def __init__(self, imagem, x, y, largura, altura):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.transform.scale(imagem,(largura,altura))
+        self.rect = self.image.get_rect()
 
 def fase_dificil(janela):
     img_player = pygame.image.load("Assets/Imgs/Jogador.jpeg")
@@ -80,12 +86,12 @@ def fase_dificil(janela):
     deslocamento_chao = 0
     keydown = False
 
-    posicoes_espinhos = [700,1200,1700]
+    posicoes_espinhos = [700,1200,1240,1650,1800,1840]
     for x in posicoes_espinhos:
         espinho = Espinho(img_espinho,x)
         all_sprites.add(espinho)
         all_espinhos.add(espinho)
-    
+   
     while jogo:
         relogio.tick(FPS)
 
