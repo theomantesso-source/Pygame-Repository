@@ -13,6 +13,8 @@ GRAVIDADE = 4
 VELOCIDADE_PULO = -36
 VELOCIDADE_CENARIO = 12
 LARGURA_BLOCO_CHAO = 330
+LARGURA_ESPINHO = 40
+ALTURA_ESPINHO = 50
 
 janela = pygame.display.set_mode((LARGURA, ALTURA))
 pygame.display.set_caption("Meu Jogo")
@@ -45,9 +47,16 @@ def fase_dificil(janela):
     img_player = pygame.transform.scale(img_player, (TAMANHO_JOGADOR, TAMANHO_JOGADOR))
     img_chao = pygame.image.load("Assets/Imgs/chao_futurista.png")
     img_chao = pygame.transform.scale(img_chao, (LARGURA_BLOCO_CHAO, ALTURA_CHAO))
+    img_espinho = pygame.image.load("Assets/Imgs/espinho_futurista.png").convert_alpha()
+    img_espinho = pygame.transform.scale(img_espinho,(LARGURA_ESPINHO,ALTURA_ESPINHO))
+
     player = jogador(img_player)
     all_sprites = pygame.sprite.Group()
     all_sprites.add(player)
+
+    espinho = img_espinho.get_rect()
+    espinho.x = 700
+    espinho.bottom = ALTURA-ALTURA_CHAO
 
     FPS = 30
     jogo = True
@@ -85,6 +94,7 @@ def fase_dificil(janela):
         for i in range(0, LARGURA + LARGURA_BLOCO_CHAO, LARGURA_BLOCO_CHAO):
             janela.blit(img_chao,(i + deslocamento_chao, ALTURA - ALTURA_CHAO))
 
+        janela.blit(img_espinho, espinho)
         all_sprites.draw(janela)
         pygame.display.update()
 
