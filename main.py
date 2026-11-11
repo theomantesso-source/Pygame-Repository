@@ -8,10 +8,10 @@ ALTURA = 700
 
 # Outras constantes
 ALTURA_CHAO = 200
-TAMANHO_JOGADOR = 50
+TAMANHO_JOGADOR = 70
 GRAVIDADE = 4
 VELOCIDADE_PULO = -36
-VELOCIDADE_CENARIO = 12
+VELOCIDADE_CENARIO = 14
 LARGURA_BLOCO_CHAO = 330
 LARGURA_ESPINHO = 40
 ALTURA_ESPINHO = 45
@@ -60,15 +60,22 @@ class Espinho(pygame.sprite.Sprite):
     
 
 def fase_dificil(janela):
-    img_player = pygame.image.load("Assets/Imgs/Jogador.jpeg")
-    img_player = pygame.transform.scale(img_player, (TAMANHO_JOGADOR, TAMANHO_JOGADOR))
     img_chao = pygame.image.load("Assets/Imgs/chao_futurista.png")
     img_chao = pygame.transform.scale(img_chao, (LARGURA_BLOCO_CHAO, ALTURA_CHAO))
     img_espinho = pygame.image.load("Assets/Imgs/espinho_futurista.png").convert_alpha()
     img_espinho = pygame.transform.scale(img_espinho,(LARGURA_ESPINHO,ALTURA_ESPINHO))
 
+    imagem_andando = []
+    for nome in ["robo_andando_1.png", "robo_andando_2.png"]:
+        img_player = pygame.image.load("Assets/Imgs/" + nome).convert_alpha()
+        img_player = pygame.transform.scale(img_player,(TAMANHO_JOGADOR,TAMANHO_JOGADOR))
+        imagem_andando.append(img_player)
 
-    player = jogador(img_player)
+    img_pulo = pygame.image.load("Assets/Imgs/robo_pulando.png").convert_alpha()
+    img_pulo = pygame.transform.scale(img_pulo,(TAMANHO_JOGADOR,TAMANHO_JOGADOR))
+
+
+    player = jogador(imagem_andando[0])
     all_sprites = pygame.sprite.Group()
     all_espinhos = pygame.sprite.Group()
     all_sprites.add(player)
