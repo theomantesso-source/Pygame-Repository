@@ -8,10 +8,10 @@ ALTURA = 700
 
 # Outras constantes
 ALTURA_CHAO = 200
-TAMANHO_JOGADOR = 70
+TAMANHO_JOGADOR = 85
 GRAVIDADE = 4
 VELOCIDADE_PULO = -36
-VELOCIDADE_CENARIO = 14
+VELOCIDADE_CENARIO = 15
 LARGURA_BLOCO_CHAO = 330
 LARGURA_ESPINHO = 40
 ALTURA_ESPINHO = 45
@@ -21,14 +21,19 @@ pygame.display.set_caption("Meu Jogo")
 
 
 class jogador(pygame.sprite.Sprite):
-    def __init__(self, imagem):
+    def __init__(self, imagem_andando, img_pulo):        
         pygame.sprite.Sprite.__init__(self)
-        self.image = imagem
+        self.imagem_andando = imagem_andando
+        self.img_pulo = img_pulo            
+        self.image = self.imagem_andando[0]
         self.mask = pygame.mask.from_surface(self.image)
         self.rect = self.image.get_rect()
         self.rect.x = 200
         self.rect.bottom = ALTURA - ALTURA_CHAO
         self.velocidade_y = 0
+        self.frame = 0
+        self.ultima_troca = pygame.time.get_ticks()
+        self.intervalo_animacao = 120
 
     def update(self):
         self.velocidade_y += GRAVIDADE
@@ -38,6 +43,20 @@ class jogador(pygame.sprite.Sprite):
             self.rect.bottom = ALTURA - ALTURA_CHAO
             self.velocidade_y = 0
 
+        agora = pygame.time.get_ticks()
+        if self.rect.bottom < ALTURA - ALTURA_CHAO:
+            self.image = self.img_pulo
+            self.ultima_troca = agora
+        else:
+            self.image = self.imagem_andando[0]
+            if agora-self.ultima_troca>=self.intervalo_animacao:
+                self.frame= 1-self.frame
+                self.ultima_troca = agora
+
+            self.image = self.imagem_andando[self.frame]
+        
+            
+        self.mask = pygame.mask.from_surface(self.image)
     def jump(self):
         if self.rect.bottom == ALTURA - ALTURA_CHAO:
             self.velocidade_y = VELOCIDADE_PULO
@@ -71,11 +90,11 @@ def fase_dificil(janela):
         img_player = pygame.transform.scale(img_player,(TAMANHO_JOGADOR,TAMANHO_JOGADOR))
         imagem_andando.append(img_player)
 
-    img_pulo = pygame.image.load("Assets/Imgs/robo_pulando.png").convert_alpha()
+    img_pulo = pygame.image.load("Assets/Imgs/robo_pulando_v2.png").convert_alpha()
     img_pulo = pygame.transform.scale(img_pulo,(TAMANHO_JOGADOR,TAMANHO_JOGADOR))
 
 
-    player = jogador(imagem_andando[0])
+    player = jogador(imagem_andando, img_pulo)    
     all_sprites = pygame.sprite.Group()
     all_espinhos = pygame.sprite.Group()
     all_sprites.add(player)
