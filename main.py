@@ -16,6 +16,8 @@ LARGURA_BLOCO_CHAO = 330
 LARGURA_ESPINHO = 40
 ALTURA_ESPINHO = 45
 TAMANHO_DRONE = 50
+LARGURA_CANO = 150
+ALTURA_CANO = ALTURA - ALTURA_CHAO - 60
 
 janela = pygame.display.set_mode((LARGURA, ALTURA))
 pygame.display.set_caption("Meu Jogo")
@@ -105,12 +107,12 @@ class Cano(pygame.sprite.Sprite):
         self.image = imagem
         self.rect = self.image.get_rect()
         self.rect.x = x
-        self.rect.bottom = ALTURA
+        self.rect.top = 0
         self.mask = pygame.mask.from_surface(self.image)
-    
+
     def update(self):
-        self.rect.x-=VELOCIDADE_CENARIO
-        if self.rect.x<=-TAMANHO_DRONE:
+        self.rect.x -= VELOCIDADE_CENARIO
+        if self.rect.right < 0:
             self.kill()
         
 def fase_dificil(janela):
@@ -120,8 +122,8 @@ def fase_dificil(janela):
     img_espinho = pygame.transform.scale(img_espinho,(LARGURA_ESPINHO,ALTURA_ESPINHO))
     img_drone = pygame.image.load("Assets/Imgs/drone_futurista.png").convert_alpha()
     img_drone = pygame.transform.scale(img_drone, (TAMANHO_DRONE, TAMANHO_DRONE))
-    img_cano = pygame.image.load("Assets/Imgs/cano_futuristico.png").convert_alpha()
-    img_cano = pygame.transform.scale(img_cano, (ALTURA-ALTURA_CHAO-TAMANHO_DRONE, TAMANHO_DRONE))
+    img_cano = pygame.image.load("Assets/Imgs/cano_futurista.png").convert_alpha()
+    img_cano = pygame.transform.scale(img_cano, (LARGURA_CANO, ALTURA_CANO))
 
     imagem_andando = []
     for nome in ["robo_andando_1.png", "robo_andando_2.png"]:
@@ -164,7 +166,7 @@ def fase_dificil(janela):
 
     posicoes_cano = [6800]
     for x in posicoes_cano:
-        cano = Cano(img_drone,x)
+        cano = Cano(img_cano,x)
         all_sprites.add(cano)
         all_canos.add(cano)
     while jogo:
