@@ -21,10 +21,12 @@ pygame.display.set_caption("Meu Jogo")
 
 
 class jogador(pygame.sprite.Sprite):
-    def __init__(self, imagem_andando, img_pulo):        
+    def __init__(self, imagem_andando, img_pulo,img_agachado):        
         pygame.sprite.Sprite.__init__(self)
         self.imagem_andando = imagem_andando
-        self.img_pulo = img_pulo            
+        self.img_pulo = img_pulo           
+        self.img_agachado = img_agachado
+        self.agachado = False
         self.image = self.imagem_andando[0]
         self.mask = pygame.mask.from_surface(self.image)
         self.rect = self.image.get_rect()
@@ -47,6 +49,9 @@ class jogador(pygame.sprite.Sprite):
         if self.rect.bottom < ALTURA - ALTURA_CHAO:
             self.image = self.img_pulo
             self.ultima_troca = agora
+        elif self.agachado:
+            self.image = self.img_agachado
+            self.ultima_troca = agora
         else:
             self.image = self.imagem_andando[0]
             if agora-self.ultima_troca>=self.intervalo_animacao:
@@ -60,6 +65,8 @@ class jogador(pygame.sprite.Sprite):
     def jump(self):
         if self.rect.bottom == ALTURA - ALTURA_CHAO:
             self.velocidade_y = VELOCIDADE_PULO
+    def agachar(self):
+        self.agachado = True
         
 
 
@@ -83,7 +90,8 @@ def fase_dificil(janela):
     img_chao = pygame.transform.scale(img_chao, (LARGURA_BLOCO_CHAO, ALTURA_CHAO))
     img_espinho = pygame.image.load("Assets/Imgs/espinho_futurista.png").convert_alpha()
     img_espinho = pygame.transform.scale(img_espinho,(LARGURA_ESPINHO,ALTURA_ESPINHO))
-
+    img_drone = pygame.image.load("Assets/Imgs/drone_futurista.png")
+    
     imagem_andando = []
     for nome in ["robo_andando_1.png", "robo_andando_2.png"]:
         img_player = pygame.image.load("Assets/Imgs/" + nome).convert_alpha()
@@ -92,9 +100,12 @@ def fase_dificil(janela):
 
     img_pulo = pygame.image.load("Assets/Imgs/robo_pulando_v2.png").convert_alpha()
     img_pulo = pygame.transform.scale(img_pulo,(TAMANHO_JOGADOR,TAMANHO_JOGADOR))
+    img_agachado = pygame.image.load("Assets/Imgs/robo_agachado.png").convert_alpha()
+    img_agachado = pygame.transform.scale(img_agachado,(TAMANHO_JOGADOR,TAMANHO_JOGADOR))
 
 
-    player = jogador(imagem_andando, img_pulo)    
+
+    player = jogador(imagem_andando, img_pulo, img_agachado)
     all_sprites = pygame.sprite.Group()
     all_espinhos = pygame.sprite.Group()
     all_sprites.add(player)
@@ -120,12 +131,18 @@ def fase_dificil(janela):
                 jogo = False
 
             if evento.type == pygame.KEYDOWN:
-                if evento.key == pygame.K_SPACE:
+                if evento.key == pygame.K_UP:
                     keydown = True
+                elif evento.key == pygame.K_DOWN:
+                    player.agachar()
+                
 
             if evento.type == pygame.KEYUP:
-                if evento.key == pygame.K_SPACE:
+                if evento.key == pygame.K_UP:
                     keydown = False
+                elif evento.key == pygame.K_DOWN:
+                    player.agachado = False
+            
 
         if keydown == True:
             player.jump()
