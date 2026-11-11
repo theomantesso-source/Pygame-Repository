@@ -99,7 +99,20 @@ class Drone(pygame.sprite.Sprite):
         if self.rect.x<=-TAMANHO_DRONE:
             self.kill()
 
-
+class Cano(pygame.sprite.Sprite):
+    def __init__(self, imagem, x):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = imagem
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.bottom = ALTURA
+        self.mask = pygame.mask.from_surface(self.image)
+    
+    def update(self):
+        self.rect.x-=VELOCIDADE_CENARIO
+        if self.rect.x<=-TAMANHO_DRONE:
+            self.kill()
+        
 def fase_dificil(janela):
     img_chao = pygame.image.load("Assets/Imgs/chao_futurista.png")
     img_chao = pygame.transform.scale(img_chao, (LARGURA_BLOCO_CHAO, ALTURA_CHAO))
@@ -107,7 +120,9 @@ def fase_dificil(janela):
     img_espinho = pygame.transform.scale(img_espinho,(LARGURA_ESPINHO,ALTURA_ESPINHO))
     img_drone = pygame.image.load("Assets/Imgs/drone_futurista.png").convert_alpha()
     img_drone = pygame.transform.scale(img_drone, (TAMANHO_DRONE, TAMANHO_DRONE))
-    
+    img_cano = pygame.image.load("Assets/Imgs/cano_futuristico.png").convert_alpha()
+    img_cano = pygame.transform.scale(img_cano, (ALTURA-ALTURA_CHAO-TAMANHO_DRONE, TAMANHO_DRONE))
+
     imagem_andando = []
     for nome in ["robo_andando_1.png", "robo_andando_2.png"]:
         img_player = pygame.image.load("Assets/Imgs/" + nome).convert_alpha()
@@ -124,6 +139,8 @@ def fase_dificil(janela):
     all_sprites = pygame.sprite.Group()
     all_espinhos = pygame.sprite.Group()
     all_drones = pygame.sprite.Group()
+    all_canos = pygame.sprite.Group()
+
     all_sprites.add(player)
 
     FPS = 30
@@ -133,18 +150,23 @@ def fase_dificil(janela):
     deslocamento_chao = 0
     keydown = False
 
-    posicoes_espinhos = [700,1200,1240,1650,1800,1840,2400,2700,3000,3040,3600,3620,3800,4000,4200,4240]
+    posicoes_espinhos = [700,1200,1240,1650,1800,1840,2400,2700,3000,3040,3580,3600,3800,4000,4200,4240]
     for x in posicoes_espinhos:
         espinho = Espinho(img_espinho,x)
         all_sprites.add(espinho)
         all_espinhos.add(espinho)
 
-    posicoes_drone = [2650,2800,3700,4200,4500,4550,5800,6000,6200]
+    posicoes_drone = [2650,2800,3700,4200,4500,4550,5800,6050,6250]
     for x in posicoes_drone:
         drone = Drone(img_drone,x)
         all_sprites.add(drone)
         all_drones.add(drone)
 
+    posicoes_cano = [6800]
+    for x in posicoes_cano:
+        cano = Cano(img_drone,x)
+        all_sprites.add(cano)
+        all_canos.add(cano)
     while jogo:
         relogio.tick(FPS)
 
@@ -171,7 +193,9 @@ def fase_dificil(janela):
         all_sprites.update()
         colisao_espinho = pygame.sprite.spritecollide(player,all_espinhos,False,pygame.sprite.collide_mask)
         colisao_drone = pygame.sprite.spritecollide(player,all_drones,False,pygame.sprite.collide_mask)
-        if colisao_espinho !=[] or colisao_drone !=[]:
+        colisao_cano = pygame.sprite.spritecollide(player,all_canos,False,pygame.sprite.collide_mask)
+
+        if colisao_espinho !=[] or colisao_drone !=[] or colisao_cano !=[]:
             return "perdeu"
         
         deslocamento_chao -= VELOCIDADE_CENARIO
