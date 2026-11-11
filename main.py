@@ -105,7 +105,7 @@ def fase_dificil(janela):
     img_chao = pygame.transform.scale(img_chao, (LARGURA_BLOCO_CHAO, ALTURA_CHAO))
     img_espinho = pygame.image.load("Assets/Imgs/espinho_futurista.png").convert_alpha()
     img_espinho = pygame.transform.scale(img_espinho,(LARGURA_ESPINHO,ALTURA_ESPINHO))
-    img_drone = pygame.image.load("Assets/Imgs/drone_futurista.png")
+    img_drone = pygame.image.load("Assets/Imgs/drone_futurista.png").convert_alpha()
     img_drone = pygame.transform.scale(img_drone, (TAMANHO_DRONE, TAMANHO_DRONE))
     
     imagem_andando = []
@@ -118,7 +118,6 @@ def fase_dificil(janela):
     img_pulo = pygame.transform.scale(img_pulo,(TAMANHO_JOGADOR,TAMANHO_JOGADOR))
     img_agachado = pygame.image.load("Assets/Imgs/robo_agachado.png").convert_alpha()
     img_agachado = pygame.transform.scale(img_agachado,(TAMANHO_JOGADOR,TAMANHO_JOGADOR))
-
 
 
     player = jogador(imagem_andando, img_pulo, img_agachado)
@@ -134,13 +133,13 @@ def fase_dificil(janela):
     deslocamento_chao = 0
     keydown = False
 
-    posicoes_espinhos = [700,1200,1240,1650,1800,1840,2400,2700,3000,3040,3600,3620,3800,4000,4200,4240,]
+    posicoes_espinhos = [700,1200,1240,1650,1800,1840,2400,2700,3000,3040,3600,3620,3800,4000,4200,4240]
     for x in posicoes_espinhos:
         espinho = Espinho(img_espinho,x)
         all_sprites.add(espinho)
         all_espinhos.add(espinho)
 
-    posicoes_drone = [2650,2800,3700,6000]
+    posicoes_drone = [2650,2800,3700,4200,4500,4550,5800,6000,6200]
     for x in posicoes_drone:
         drone = Drone(img_drone,x)
         all_sprites.add(drone)
