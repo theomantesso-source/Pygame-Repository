@@ -15,6 +15,7 @@ VELOCIDADE_CENARIO = 15
 LARGURA_BLOCO_CHAO = 330
 LARGURA_ESPINHO = 40
 ALTURA_ESPINHO = 45
+TAMANHO_DRONE = 45
 
 janela = pygame.display.set_mode((LARGURA, ALTURA))
 pygame.display.set_caption("Meu Jogo")
@@ -83,7 +84,17 @@ class Espinho(pygame.sprite.Sprite):
         self.rect.x-=VELOCIDADE_CENARIO
         if self.rect.x<-LARGURA_ESPINHO:
             self.kill()
-    
+
+class Drone(pygame.sprite.Sprite):
+    def __init__(self, imagem, x, y):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = imagem
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+        
+        
+
 
 def fase_dificil(janela):
     img_chao = pygame.image.load("Assets/Imgs/chao_futurista.png")
