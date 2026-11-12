@@ -198,7 +198,7 @@ def fase_dificil(janela):
     deslocamento_chao = 0
     keydown = False
 
-    vida = Vida(img_vida,1000)
+    vida = Vida(img_vida,2500)
     all_vidas = pygame.sprite.Group()
     all_sprites.add(vida)
     all_vidas.add(vida)
@@ -255,13 +255,13 @@ def fase_dificil(janela):
                 jogo = False
 
             if evento.type == pygame.KEYDOWN:
-                if evento.key == pygame.K_UP:
+                if evento.key == pygame.K_UP or evento.key == pygame.K_SPACE:
                     keydown = True
                 elif evento.key == pygame.K_DOWN:
                     player.agachar()
                 
             if evento.type == pygame.KEYUP:
-                if evento.key == pygame.K_UP:
+                if evento.key == pygame.K_UP or evento.key == pygame.K_SPACE:
                     keydown = False
                 elif evento.key == pygame.K_DOWN:
                     player.agachado = False
