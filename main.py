@@ -152,19 +152,19 @@ def fase_dificil(janela):
     deslocamento_chao = 0
     keydown = False
 
-    posicoes_espinhos = [700,1200,1240,1650,1800,1840,2400,2700,3000,3040,3580,3600,3800,4000,4200,4240]
+    posicoes_espinhos = [700,1200,1240,1650,1800,1840,2400,2700,2996,3036,3600,3620,3820,4020,4200,4240,5000,5300,5600]
     for x in posicoes_espinhos:
         espinho = Espinho(img_espinho,x)
         all_sprites.add(espinho)
         all_espinhos.add(espinho)
 
-    posicoes_drone = [2650,2800,3700,4200,4500,4550,5800,6050,6250]
+    posicoes_drone = [2650,2800,3700,4200,4500,4550,5800,6050,6200,6300]
     for x in posicoes_drone:
         drone = Drone(img_drone,x)
         all_sprites.add(drone)
         all_drones.add(drone)
 
-    posicoes_cano = [6800]
+    posicoes_cano = [5800,6000]
     for x in posicoes_cano:
         cano = Cano(img_cano,x)
         all_sprites.add(cano)
