@@ -18,6 +18,8 @@ ALTURA_ESPINHO = 45
 TAMANHO_DRONE = 50
 LARGURA_CANO = 150
 ALTURA_CANO = ALTURA - ALTURA_CHAO - 60
+LARGURA_PORTAL = 100
+ALTURA_PORTAL = ALTURA - ALTURA_CHAO
 
 janela = pygame.display.set_mode((LARGURA, ALTURA))
 pygame.display.set_caption("Meu Jogo")
@@ -114,16 +116,31 @@ class Cano(pygame.sprite.Sprite):
         self.rect.x -= VELOCIDADE_CENARIO
         if self.rect.right < 0:
             self.kill()
+
+class Portal(pygame.sprite.Sprite):
+    def __init__(self,imagem, x):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = imagem
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.top = ALTURA-ALTURA_CHAO
+        self.mask = pygame.mask.from_surface(self.image)    
         
 def fase_dificil(janela):
     img_chao = pygame.image.load("Assets/Imgs/chao_futurista.png")
     img_chao = pygame.transform.scale(img_chao, (LARGURA_BLOCO_CHAO, ALTURA_CHAO))
+
     img_espinho = pygame.image.load("Assets/Imgs/espinho_futurista.png").convert_alpha()
     img_espinho = pygame.transform.scale(img_espinho,(LARGURA_ESPINHO,ALTURA_ESPINHO))
     img_drone = pygame.image.load("Assets/Imgs/drone_futurista.png").convert_alpha()
     img_drone = pygame.transform.scale(img_drone, (TAMANHO_DRONE, TAMANHO_DRONE))
     img_cano = pygame.image.load("Assets/Imgs/cano_futurista.png").convert_alpha()
     img_cano = pygame.transform.scale(img_cano, (LARGURA_CANO, ALTURA_CANO))
+    img_portal_agachar = pygame.image.load("Assets/Imgs/portal_agachar.png").convert_alpha()
+    img_portal_agachar = pygame.transform.scale(img_portal_agachar, (LARGURA_PORTAL,ALTURA_PORTAL))
+    img_portal_pular = pygame.image.load("Assets/Imgs/portal_pular.png").convert_alpha()
+    img_portal_pular = pygame.transform.scale(img_portal_pular, (LARGURA_PORTAL,ALTURA_PORTAL))
+
 
     imagem_robo_andando = []
     for nome in ["robo_andando_1.png", "robo_andando_2.png"]:
@@ -183,7 +200,8 @@ def fase_dificil(janela):
         if agora - ultima_aceleracao>=intervalo_aceleracao:
             if VELOCIDADE_CENARIO<velocidade_maxima:
                     VELOCIDADE_CENARIO+=1
-                    ultima_aceleracao = pygame.time.get_ticks()
+
+            ultima_aceleracao = pygame.time.get_ticks()
 
         
         for evento in pygame.event.get():
