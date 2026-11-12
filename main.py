@@ -18,7 +18,7 @@ ALTURA_ESPINHO = 45
 TAMANHO_DRONE = 50
 LARGURA_CANO = 150
 ALTURA_CANO = ALTURA - ALTURA_CHAO - 60
-LARGURA_PORTAL_PULAR = 120
+LARGURA_PORTAL_PULAR = 100
 ALTURA_PORTAL_PULAR = 280
 
 LARGURA_PORTAL_AGACHAR = 220
@@ -181,35 +181,35 @@ def fase_dificil(janela):
     deslocamento_chao = 0
     keydown = False
 
-    posicoes_espinhos = [700,1200,1240,1650,1800,1840,2400,2700,2996,3036,3600,3620,3820,4020,4200,4240,5000,5300,5600]
+    posicoes_espinhos = [700, 1200, 1240, 1650, 1800, 1840, 2400, 2700, 2996, 3036, 3600, 3620, 3820, 4020, 4200, 4240, 5000, 5300, 5600, 6200, 6240, 6420, 8270, 8700, 9000, 9040, 10400, 10440, 11070, 11110, 11350, 11390, 12700, 12740, 13200, 13240, 14400, 14440, 14680, 15500, 15540, 15800, 15840, 17000, 17040, 17080, 17300, 18100, 18140, 18180, 18450, 18490, 19800, 19840, 19880, 21100, 21140, 21180]
     for x in posicoes_espinhos:
         espinho = Espinho(img_espinho,x)
         all_sprites.add(espinho)
         all_espinhos.add(espinho)
  
-    posicoes_drone = [2650,2800,3700,4200,4520,5800,6050,6200,6300]
+    posicoes_drone = [2650, 2800, 3700, 4200, 4520, 5800, 6050, 6200, 6300, 12400, 12700, 14320, 16300, 17200, 17860, 18450, 21100, 21750, 22400, 24100, 24670, 26800] 
     for x in posicoes_drone:
         drone = Drone(img_drone,x)
         all_sprites.add(drone)
         all_drones.add(drone)
 
-    posicoes_cano = [5800,6000]
+    posicoes_cano = [5800, 6000, 6900, 8400, 9200, 10850, 11800, 13000, 13550, 16050, 18800, 20500] 
     for x in posicoes_cano:
         cano = Cano(img_cano,x)
         all_sprites.add(cano)
         all_canos.add(cano)
 
-    posicoes_portal_pular = [7600]
+    posicoes_portal_pular = [7600, 8000, 8600, 10000, 11950, 14950, 16280, 17600, 21600]
     for x in posicoes_portal_pular:
             portal = Portal(img_portal_pular,x)
             all_sprites.add(portal)
             all_portais.add(portal)
 
-    posicoes_portal_agachar = [7000]
+    posicoes_portal_agachar = [7000, 12350, 13950, 15180, 16550, 19300]
     for x in posicoes_portal_agachar:
-                portal = Portal(img_portal_agachar,x)
-                all_sprites.add(portal)
-                all_portais.add(portal)
+        portal = Portal(img_portal_agachar,x)
+        all_sprites.add(portal)
+        all_portais.add(portal)
 
     
     ultima_aceleracao = pygame.time.get_ticks()
