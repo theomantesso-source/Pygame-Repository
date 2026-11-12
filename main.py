@@ -97,7 +97,7 @@ class Drone(pygame.sprite.Sprite):
         self.mask = pygame.mask.from_surface(self.image)
 
     def update(self):
-        self.rect.x-=20
+        self.rect.x-=VELOCIDADE_CENARIO+5
         if self.rect.x<=-TAMANHO_DRONE:
             self.kill()
 
@@ -125,11 +125,11 @@ def fase_dificil(janela):
     img_cano = pygame.image.load("Assets/Imgs/cano_futurista.png").convert_alpha()
     img_cano = pygame.transform.scale(img_cano, (LARGURA_CANO, ALTURA_CANO))
 
-    imagem_andando = []
+    imagem_robo_andando = []
     for nome in ["robo_andando_1.png", "robo_andando_2.png"]:
         img_player = pygame.image.load("Assets/Imgs/" + nome).convert_alpha()
         img_player = pygame.transform.scale(img_player,(TAMANHO_JOGADOR,TAMANHO_JOGADOR))
-        imagem_andando.append(img_player)
+        imagem_robo_andando.append(img_player)
 
     img_pulo = pygame.image.load("Assets/Imgs/robo_pulando_v2.png").convert_alpha()
     img_pulo = pygame.transform.scale(img_pulo,(TAMANHO_JOGADOR,TAMANHO_JOGADOR))
@@ -137,13 +137,15 @@ def fase_dificil(janela):
     img_agachado = pygame.transform.scale(img_agachado,(TAMANHO_JOGADOR,TAMANHO_JOGADOR))
 
 
-    player = jogador(imagem_andando, img_pulo, img_agachado)
+    player = jogador(imagem_robo_andando, img_pulo, img_agachado)
     all_sprites = pygame.sprite.Group()
     all_espinhos = pygame.sprite.Group()
     all_drones = pygame.sprite.Group()
     all_canos = pygame.sprite.Group()
 
     all_sprites.add(player)
+    global VELOCIDADE_CENARIO
+    VELOCIDADE_CENARIO = 15
 
     FPS = 30
     jogo = True
@@ -158,7 +160,7 @@ def fase_dificil(janela):
         all_sprites.add(espinho)
         all_espinhos.add(espinho)
 
-    posicoes_drone = [2650,2800,3700,4200,4500,4550,5800,6050,6200,6300]
+    posicoes_drone = [2650,2800,3700,4200,4520,5800,6050,6200,6300]
     for x in posicoes_drone:
         drone = Drone(img_drone,x)
         all_sprites.add(drone)
@@ -169,9 +171,21 @@ def fase_dificil(janela):
         cano = Cano(img_cano,x)
         all_sprites.add(cano)
         all_canos.add(cano)
+
+    ultima_aceleracao = pygame.time.get_ticks()
+    intervalo_aceleracao = 15000
+    velocidade_maxima = 18
+
     while jogo:
         relogio.tick(FPS)
+        agora = pygame.time.get_ticks()
 
+        if agora - ultima_aceleracao>=intervalo_aceleracao:
+            if VELOCIDADE_CENARIO<velocidade_maxima:
+                    VELOCIDADE_CENARIO+=1
+                    ultima_aceleracao = pygame.time.get_ticks()
+
+        
         for evento in pygame.event.get():
             if evento.type == pygame.QUIT:
                 jogo = False
@@ -199,7 +213,7 @@ def fase_dificil(janela):
 
         if colisao_espinho !=[] or colisao_drone !=[] or colisao_cano !=[]:
             return "perdeu"
-        
+
         deslocamento_chao -= VELOCIDADE_CENARIO
         if deslocamento_chao <= -LARGURA_BLOCO_CHAO:
             deslocamento_chao += LARGURA_BLOCO_CHAO
