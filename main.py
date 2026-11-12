@@ -20,6 +20,8 @@ LARGURA_CANO = 150
 ALTURA_CANO = ALTURA - ALTURA_CHAO - 60
 LARGURA_PORTAL_PULAR = 100
 ALTURA_PORTAL_PULAR = 280
+ALTURA_ESCUDO = 35
+LARGURA_ESCUDO = 35
 
 LARGURA_PORTAL_AGACHAR = 220
 ALTURA_PORTAL_AGACHAR = 120
@@ -133,8 +135,21 @@ class Portal(pygame.sprite.Sprite):
         if self.rect.right<0:
             self.kill()
 
+class Vida(pygame.sprite.Sprite):
+    def __init__(self,imagem, x):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = imagem
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.bottom = ALTURA - ALTURA_CHAO        
+        self.mask = pygame.mask.from_surface(self.image)
 
-    
+    def update(self):
+        self.rect.x -= VELOCIDADE_CENARIO
+        if self.rect.right<0:
+            self.kill()
+
+
 def fase_dificil(janela):
     img_chao = pygame.image.load("Assets/Imgs/chao_futurista.png")
     img_chao = pygame.transform.scale(img_chao, (LARGURA_BLOCO_CHAO, ALTURA_CHAO))
@@ -149,6 +164,8 @@ def fase_dificil(janela):
     img_portal_agachar = pygame.transform.scale(img_portal_agachar, (LARGURA_PORTAL_AGACHAR,ALTURA_PORTAL_AGACHAR))
     img_portal_pular = pygame.image.load("Assets/Imgs/portal_pular.png").convert_alpha()
     img_portal_pular = pygame.transform.scale(img_portal_pular, (LARGURA_PORTAL_PULAR,ALTURA_PORTAL_PULAR))
+    img_vida = pygame.image.load("Assets/Imgs/vida_retro.png").convert_alpha()
+    img_vida = pygame.transform.scale(img_vida, (LARGURA_ESCUDO,ALTURA_ESCUDO ))    
 
 
     imagem_robo_andando = []
@@ -181,13 +198,18 @@ def fase_dificil(janela):
     deslocamento_chao = 0
     keydown = False
 
+    vida = Vida(img_vida,1000)
+    all_vidas = pygame.sprite.Group()
+    all_sprites.add(vida)
+    all_vidas.add(vida)
+
     posicoes_espinhos = [700, 1200, 1240, 1650, 1800, 1840, 2400, 2700, 2996, 3036, 3600, 3620, 3820, 4020, 4200, 4240, 5000, 5300, 5600, 6200, 6240, 6420, 8270, 8700, 9000, 9040, 10400, 10440, 11070, 11110, 11350, 11390, 12700, 12740, 13200, 13240, 14400, 14440, 14680, 15500, 15540, 15800, 15840, 17000, 17040, 17080, 17300, 18100, 18140, 18180, 18450, 18490, 19800, 19840, 19880, 21100, 21140, 21180]
     for x in posicoes_espinhos:
         espinho = Espinho(img_espinho,x)
         all_sprites.add(espinho)
         all_espinhos.add(espinho)
  
-    posicoes_drone = [2650, 2800, 3700, 4200, 4520, 5800, 6050, 6200, 6300, 12400, 12700, 14320, 16300, 17200, 17860, 18450, 21100, 21750, 22400, 24100, 24670, 26800] 
+    posicoes_drone = [2650, 2800, 3700, 4200, 4520, 5800, 6050, 6200, 6300, 12400, 12700, 14320, 16300, 17200, 17860, 18450, 21100, 21750, 24670, 26800] 
     for x in posicoes_drone:
         drone = Drone(img_drone,x)
         all_sprites.add(drone)
@@ -214,7 +236,8 @@ def fase_dificil(janela):
     
     ultima_aceleracao = pygame.time.get_ticks()
     intervalo_aceleracao = 15000
-    velocidade_maxima = 18
+    velocidade_maxima = 19
+    life = 0
 
     while jogo:
         relogio.tick(FPS)
@@ -248,24 +271,36 @@ def fase_dificil(janela):
             player.jump()
 
         all_sprites.update()
-        colisao_espinho = pygame.sprite.spritecollide(player,all_espinhos,False,pygame.sprite.collide_mask)
-        colisao_drone = pygame.sprite.spritecollide(player,all_drones,False,pygame.sprite.collide_mask)
-        colisao_cano = pygame.sprite.spritecollide(player,all_canos,False,pygame.sprite.collide_mask)
-        colisao_portal = pygame.sprite.spritecollide(player,all_portais,False,pygame.sprite.collide_mask)
+        colisao_espinho = pygame.sprite.spritecollide(player,all_espinhos,True,pygame.sprite.collide_mask)
+        colisao_drone = pygame.sprite.spritecollide(player,all_drones,True,pygame.sprite.collide_mask)
+        colisao_cano = pygame.sprite.spritecollide(player,all_canos,True,pygame.sprite.collide_mask)
+        colisao_portal = pygame.sprite.spritecollide(player,all_portais,True,pygame.sprite.collide_mask)
+        colisao_vidas = pygame.sprite.spritecollide(player,all_vidas,True,pygame.sprite.collide_mask)
 
         if colisao_espinho !=[] or colisao_drone !=[] or colisao_cano !=[] or colisao_portal !=[]:
+            life -= 1
+
+        if colisao_vidas != []:
+            life += 1
+        
+        if life<0:
             return "perdeu"
 
         deslocamento_chao -= VELOCIDADE_CENARIO
         if deslocamento_chao <= -LARGURA_BLOCO_CHAO:
             deslocamento_chao += LARGURA_BLOCO_CHAO
-    
+
+
         janela.fill((8, 12, 32))
 
         for i in range(0, LARGURA + LARGURA_BLOCO_CHAO, LARGURA_BLOCO_CHAO):
             janela.blit(img_chao,(i + deslocamento_chao, ALTURA - ALTURA_CHAO))
 
         all_sprites.draw(janela)
+        fonte = pygame.font.Font("Assets/Fonts/PressStart2P.ttf", 36)
+        texto_vida = fonte.render(f"Vidas: {life}",True,(255,0,0))
+        janela.blit(texto_vida, (20, 20))
+
         pygame.display.update()
 
     return "sair"
