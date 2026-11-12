@@ -18,9 +18,11 @@ ALTURA_ESPINHO = 45
 TAMANHO_DRONE = 50
 LARGURA_CANO = 150
 ALTURA_CANO = ALTURA - ALTURA_CHAO - 60
-LARGURA_PORTAL = 100
-ALTURA_PORTAL = ALTURA - ALTURA_CHAO
+LARGURA_PORTAL_PULAR = 120
+ALTURA_PORTAL_PULAR = 280
 
+LARGURA_PORTAL_AGACHAR = 220
+ALTURA_PORTAL_AGACHAR = 120
 janela = pygame.display.set_mode((LARGURA, ALTURA))
 pygame.display.set_caption("Meu Jogo")
 
@@ -123,9 +125,16 @@ class Portal(pygame.sprite.Sprite):
         self.image = imagem
         self.rect = self.image.get_rect()
         self.rect.x = x
-        self.rect.top = ALTURA-ALTURA_CHAO
-        self.mask = pygame.mask.from_surface(self.image)    
-        
+        self.rect.bottom = ALTURA - ALTURA_CHAO        
+        self.mask = pygame.mask.from_surface(self.image)
+
+    def update(self):
+        self.rect.x -= VELOCIDADE_CENARIO
+        if self.rect.right<0:
+            self.kill()
+
+
+    
 def fase_dificil(janela):
     img_chao = pygame.image.load("Assets/Imgs/chao_futurista.png")
     img_chao = pygame.transform.scale(img_chao, (LARGURA_BLOCO_CHAO, ALTURA_CHAO))
@@ -137,9 +146,9 @@ def fase_dificil(janela):
     img_cano = pygame.image.load("Assets/Imgs/cano_futurista.png").convert_alpha()
     img_cano = pygame.transform.scale(img_cano, (LARGURA_CANO, ALTURA_CANO))
     img_portal_agachar = pygame.image.load("Assets/Imgs/portal_agachar.png").convert_alpha()
-    img_portal_agachar = pygame.transform.scale(img_portal_agachar, (LARGURA_PORTAL,ALTURA_PORTAL))
+    img_portal_agachar = pygame.transform.scale(img_portal_agachar, (LARGURA_PORTAL_AGACHAR,ALTURA_PORTAL_AGACHAR))
     img_portal_pular = pygame.image.load("Assets/Imgs/portal_pular.png").convert_alpha()
-    img_portal_pular = pygame.transform.scale(img_portal_pular, (LARGURA_PORTAL,ALTURA_PORTAL))
+    img_portal_pular = pygame.transform.scale(img_portal_pular, (LARGURA_PORTAL_PULAR,ALTURA_PORTAL_PULAR))
 
 
     imagem_robo_andando = []
@@ -159,6 +168,7 @@ def fase_dificil(janela):
     all_espinhos = pygame.sprite.Group()
     all_drones = pygame.sprite.Group()
     all_canos = pygame.sprite.Group()
+    all_portais = pygame.sprite.Group()
 
     all_sprites.add(player)
     global VELOCIDADE_CENARIO
@@ -176,7 +186,7 @@ def fase_dificil(janela):
         espinho = Espinho(img_espinho,x)
         all_sprites.add(espinho)
         all_espinhos.add(espinho)
-
+ 
     posicoes_drone = [2650,2800,3700,4200,4520,5800,6050,6200,6300]
     for x in posicoes_drone:
         drone = Drone(img_drone,x)
@@ -189,6 +199,19 @@ def fase_dificil(janela):
         all_sprites.add(cano)
         all_canos.add(cano)
 
+    posicoes_portal_pular = [7600]
+    for x in posicoes_portal_pular:
+            portal = Portal(img_portal_pular,x)
+            all_sprites.add(portal)
+            all_portais.add(portal)
+
+    posicoes_portal_agachar = [7000]
+    for x in posicoes_portal_agachar:
+                portal = Portal(img_portal_agachar,x)
+                all_sprites.add(portal)
+                all_portais.add(portal)
+
+    
     ultima_aceleracao = pygame.time.get_ticks()
     intervalo_aceleracao = 15000
     velocidade_maxima = 18
@@ -228,8 +251,9 @@ def fase_dificil(janela):
         colisao_espinho = pygame.sprite.spritecollide(player,all_espinhos,False,pygame.sprite.collide_mask)
         colisao_drone = pygame.sprite.spritecollide(player,all_drones,False,pygame.sprite.collide_mask)
         colisao_cano = pygame.sprite.spritecollide(player,all_canos,False,pygame.sprite.collide_mask)
+        colisao_portal = pygame.sprite.spritecollide(player,all_portais,False,pygame.sprite.collide_mask)
 
-        if colisao_espinho !=[] or colisao_drone !=[] or colisao_cano !=[]:
+        if colisao_espinho !=[] or colisao_drone !=[] or colisao_cano !=[] or colisao_portal !=[]:
             return "perdeu"
 
         deslocamento_chao -= VELOCIDADE_CENARIO
