@@ -30,8 +30,9 @@ pygame.display.set_caption("Meu Jogo")
 
 
 class jogador(pygame.sprite.Sprite):
-    def __init__(self, imagem_andando, img_pulo,img_agachado):        
+    def __init__(self, imagem_andando, img_pulo,img_agachado,som_pulo):        
         pygame.sprite.Sprite.__init__(self)
+        self.som_pulo = som_pulo
         self.imagem_andando = imagem_andando
         self.img_pulo = img_pulo           
         self.img_agachado = img_agachado
@@ -74,6 +75,8 @@ class jogador(pygame.sprite.Sprite):
     def jump(self):
         if self.rect.bottom == ALTURA - ALTURA_CHAO:
             self.velocidade_y = VELOCIDADE_PULO
+            self.som_pulo.play()
+        
     def agachar(self):
         self.agachado = True
         
@@ -141,7 +144,7 @@ class Vida(pygame.sprite.Sprite):
         self.image = imagem
         self.rect = self.image.get_rect()
         self.rect.x = x
-        self.rect.bottom = ALTURA - ALTURA_CHAO        
+        self.rect.bottom = ALTURA - ALTURA_CHAO - 170    
         self.mask = pygame.mask.from_surface(self.image)
 
     def update(self):
@@ -179,8 +182,18 @@ def fase_dificil(janela):
     img_agachado = pygame.image.load("Assets/Imgs/robo_agachado.png").convert_alpha()
     img_agachado = pygame.transform.scale(img_agachado,(TAMANHO_JOGADOR,TAMANHO_JOGADOR))
 
+    som_pulo = pygame.mixer.Sound("Assets/Sons/som_pulo.wav")
+    som_pulo.set_volume(0.3)
+    som_batida = pygame.mixer.Sound("Assets/Sons/batida_quebra.wav")
+    som_batida.set_volume(0.5)
+    som_morte = pygame.mixer.Sound("Assets/Sons/morte.wav")
+    som_morte.set_volume(0.5)
+    som_vida = pygame.mixer.Sound("Assets/Sons/coleta_vida.wav")
+    som_vida.set_volume(0.7)
 
-    player = jogador(imagem_robo_andando, img_pulo, img_agachado)
+
+
+    player = jogador(imagem_robo_andando, img_pulo, img_agachado,som_pulo)
     all_sprites = pygame.sprite.Group()
     all_espinhos = pygame.sprite.Group()
     all_drones = pygame.sprite.Group()
@@ -191,14 +204,7 @@ def fase_dificil(janela):
     global VELOCIDADE_CENARIO
     VELOCIDADE_CENARIO = 15
 
-    FPS = 30
-    jogo = True
-    relogio = pygame.time.Clock()
-
-    deslocamento_chao = 0
-    keydown = False
-
-    vida = Vida(img_vida,2500)
+    vida = Vida(img_vida,5600)
     all_vidas = pygame.sprite.Group()
     all_sprites.add(vida)
     all_vidas.add(vida)
@@ -241,7 +247,18 @@ def fase_dificil(janela):
     distancia_percorrida = 0
     pontos = 0
     fonte_tex = pygame.font.Font("Assets/Fonts/PressStart2P.ttf", 24)
-    musica_fundo = pygame.mixer.music.load("Assets/Sons/musica_fundo.wav")
+    pygame.mixer.music.load("Assets/Sons/musica_fundo.wav")
+    pygame.mixer.music.set_volume(1)
+    pygame.mixer.music.play(-1)
+
+    FPS = 30
+    jogo = True
+    relogio = pygame.time.Clock()
+    
+    deslocamento_chao = 0
+    keydown = False
+
+    morrendo = False 
 
     while jogo:
         relogio.tick(FPS)
@@ -260,6 +277,7 @@ def fase_dificil(janela):
             if evento.type == pygame.QUIT:
                 jogo = False
 
+
             if evento.type == pygame.KEYDOWN:
                 if evento.key == pygame.K_UP or evento.key == pygame.K_SPACE:
                     keydown = True
@@ -273,6 +291,11 @@ def fase_dificil(janela):
                     player.agachado = False
             
 
+        if morrendo == True:
+            if canal_morte.get_busy() == False:
+                return "perdeu"
+            continue
+
         if keydown == True:
             player.jump()
 
@@ -285,12 +308,28 @@ def fase_dificil(janela):
 
         if colisao_espinho !=[] or colisao_drone !=[] or colisao_cano !=[] or colisao_portal !=[]:
             life -= 1
+            if life>=0:
+                som_batida.play()
 
         if colisao_vidas != []:
+            som_vida.play()
             life += 1
         
         if life<0:
-            return "perdeu"
+            pygame.mixer.music.stop()
+            canal_morte = som_morte.play()
+            morrendo = True
+            continue
+        
+        agora = pygame.time.get_ticks()
+        distancia_percorrida += VELOCIDADE_CENARIO
+        pontos = distancia_percorrida // 10
+        
+        if agora - ultima_aceleracao>=intervalo_aceleracao:
+            if VELOCIDADE_CENARIO<velocidade_maxima:
+                    VELOCIDADE_CENARIO+=1
+        
+            ultima_aceleracao = pygame.time.get_ticks()
 
         deslocamento_chao -= VELOCIDADE_CENARIO
         if deslocamento_chao <= -LARGURA_BLOCO_CHAO:
