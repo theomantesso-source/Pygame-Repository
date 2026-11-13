@@ -209,6 +209,34 @@ def tela_final(janela,pontos,pontos_moedas,vidas):
         janela.blit(texto_final,(370,570))
         pygame.display.update()
 
+def tela_game_over(janela,pontos):
+    img_game_over = pygame.image.load("Assets/Imgs/game_over.png")
+    img_game_over = pygame.transform.scale(img_game_over, (LARGURA,ALTURA)) 
+  
+    timer = pygame.time.Clock()
+    tela = True
+    fonte_titulo = pygame.font.Font("Assets/Fonts/PressStart2P.ttf",46)
+    fonte_info = pygame.font.Font("Assets/Fonts/PressStart2P.ttf",24)
+
+    texto_titulo = fonte_titulo.render(f"GAME OVER!",True,(255,0,0))
+    texto_tente = fonte_info.render(f"Tente novamente!",True,(255,255,255))
+    total_ponto = fonte_info.render(f"Total pontos: {pontos}",True,(255,255,255))
+
+    while tela:
+        timer.tick(30)
+        for evento in pygame.event.get():
+            if evento.type == pygame.QUIT:
+                tela = False
+
+        janela.blit(img_game_over,(0,0))
+        janela.blit(texto_titulo, (300,220))
+        janela.blit(texto_tente,(320,280))
+        janela.blit(total_ponto,(310,400))
+   
+        pygame.display.update()
+
+
+
 def fase_dificil(janela):
     img_chao = pygame.image.load("Assets/Imgs/chao_futurista.png")
     img_chao = pygame.transform.scale(img_chao, (LARGURA_BLOCO_CHAO, ALTURA_CHAO))
@@ -229,6 +257,7 @@ def fase_dificil(janela):
     img_moeda = pygame.transform.scale(img_moeda, (50,50)) 
     img_chegada = pygame.image.load("Assets/Imgs/chegada_fim.png").convert_alpha()
     img_chegada = pygame.transform.scale(img_chegada, (280,280))   
+    
 
 
     imagem_robo_andando = []
@@ -369,6 +398,7 @@ def fase_dificil(janela):
 
         if morrendo == True:
             if canal_morte.get_busy() == False:
+                tela_game_over(janela,pontos)
                 return "perdeu"
             continue
 
