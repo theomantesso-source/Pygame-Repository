@@ -144,13 +144,28 @@ class Vida(pygame.sprite.Sprite):
         self.image = imagem
         self.rect = self.image.get_rect()
         self.rect.x = x
-        self.rect.bottom = ALTURA - ALTURA_CHAO - 170    
+        self.rect.bottom = ALTURA - ALTURA_CHAO - 85    
         self.mask = pygame.mask.from_surface(self.image)
 
     def update(self):
         self.rect.x -= VELOCIDADE_CENARIO
         if self.rect.right<0:
             self.kill()
+
+class Moeda(pygame.sprite.Sprite):
+    def __init__(self,imagem, x,y):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = imagem
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.bottom = y   
+        self.mask = pygame.mask.from_surface(self.image)
+
+    def update(self):
+            self.rect.x -= VELOCIDADE_CENARIO
+            if self.rect.right<0:
+                self.kill()
+
 
 
 def fase_dificil(janela):
@@ -169,6 +184,8 @@ def fase_dificil(janela):
     img_portal_pular = pygame.transform.scale(img_portal_pular, (LARGURA_PORTAL_PULAR,ALTURA_PORTAL_PULAR))
     img_vida = pygame.image.load("Assets/Imgs/vida_retro.png").convert_alpha()
     img_vida = pygame.transform.scale(img_vida, (LARGURA_ESCUDO,ALTURA_ESCUDO ))    
+    img_moeda = pygame.image.load("Assets/Imgs/moeda_ouro.png").convert_alpha()
+    img_moeda = pygame.transform.scale(img_moeda, (50,50))  
 
 
     imagem_robo_andando = []
@@ -190,6 +207,8 @@ def fase_dificil(janela):
     som_morte.set_volume(0.5)
     som_vida = pygame.mixer.Sound("Assets/Sons/coleta_vida.wav")
     som_vida.set_volume(0.7)
+    som_moeda = pygame.mixer.Sound("Assets/Sons/coleta_moeda_v2.wav")
+    som_moeda.set_volume(0.7)
 
 
 
@@ -199,12 +218,13 @@ def fase_dificil(janela):
     all_drones = pygame.sprite.Group()
     all_canos = pygame.sprite.Group()
     all_portais = pygame.sprite.Group()
+    all_coins = pygame.sprite.Group()
 
     all_sprites.add(player)
     global VELOCIDADE_CENARIO
     VELOCIDADE_CENARIO = 15
 
-    vida = Vida(img_vida,5600)
+    vida = Vida(img_vida,5700)
     all_vidas = pygame.sprite.Group()
     all_sprites.add(vida)
     all_vidas.add(vida)
@@ -239,7 +259,17 @@ def fase_dificil(janela):
         all_sprites.add(portal)
         all_portais.add(portal)
 
+    posicao_moeda_x = [3550, 11450, 14250, 18300, 20850]
+    posicao_moeda_y = [ALTURA-ALTURA_CHAO, 430, 500, 500, 500]
+
+    i = 0
+    while i<len(posicao_moeda_x):
+        moeda = Moeda(img_moeda,posicao_moeda_x[i],posicao_moeda_y[i])
+        all_sprites.add(moeda)
+        all_coins.add(moeda)
+        i+=1
     
+
     ultima_aceleracao = pygame.time.get_ticks()
     intervalo_aceleracao = 15000
     velocidade_maxima = 19
@@ -259,12 +289,10 @@ def fase_dificil(janela):
     keydown = False
 
     morrendo = False 
-
+    pontos_moedas = 0
     while jogo:
         relogio.tick(FPS)
         agora = pygame.time.get_ticks()
-        distancia_percorrida += VELOCIDADE_CENARIO
-        pontos = distancia_percorrida // 10
 
         if agora - ultima_aceleracao>=intervalo_aceleracao:
             if VELOCIDADE_CENARIO<velocidade_maxima:
@@ -305,6 +333,8 @@ def fase_dificil(janela):
         colisao_cano = pygame.sprite.spritecollide(player,all_canos,True,pygame.sprite.collide_mask)
         colisao_portal = pygame.sprite.spritecollide(player,all_portais,True,pygame.sprite.collide_mask)
         colisao_vidas = pygame.sprite.spritecollide(player,all_vidas,True,pygame.sprite.collide_mask)
+        colisao_moedas = pygame.sprite.spritecollide(player,all_coins,True,pygame.sprite.collide_mask)
+
 
         if colisao_espinho !=[] or colisao_drone !=[] or colisao_cano !=[] or colisao_portal !=[]:
             life -= 1
@@ -314,6 +344,11 @@ def fase_dificil(janela):
         if colisao_vidas != []:
             som_vida.play()
             life += 1
+
+        if colisao_moedas!=[]:
+            som_moeda.play()
+            pontos_moedas+=100
+
         
         if life<0:
             pygame.mixer.music.stop()
@@ -323,14 +358,8 @@ def fase_dificil(janela):
         
         agora = pygame.time.get_ticks()
         distancia_percorrida += VELOCIDADE_CENARIO
-        pontos = distancia_percorrida // 10
+        pontos = distancia_percorrida // 10 + pontos_moedas
         
-        if agora - ultima_aceleracao>=intervalo_aceleracao:
-            if VELOCIDADE_CENARIO<velocidade_maxima:
-                    VELOCIDADE_CENARIO+=1
-        
-            ultima_aceleracao = pygame.time.get_ticks()
-
         deslocamento_chao -= VELOCIDADE_CENARIO
         if deslocamento_chao <= -LARGURA_BLOCO_CHAO:
             deslocamento_chao += LARGURA_BLOCO_CHAO
