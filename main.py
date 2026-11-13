@@ -224,7 +224,7 @@ def fase_dificil(janela):
     global VELOCIDADE_CENARIO
     VELOCIDADE_CENARIO = 15
 
-    vida = Vida(img_vida,5700)
+    vida = Vida(img_vida,9370)
     all_vidas = pygame.sprite.Group()
     all_sprites.add(vida)
     all_vidas.add(vida)
@@ -235,7 +235,7 @@ def fase_dificil(janela):
         all_sprites.add(espinho)
         all_espinhos.add(espinho)
  
-    posicoes_drone = [2650, 2800, 3700, 4200, 4520, 5800, 6050, 6200, 6300, 12400, 12700, 14320, 16300, 17200, 17860, 18450, 21100, 21750, 24670, 26800] 
+    posicoes_drone = [2650, 2800, 3700, 4200, 4520, 5800, 6050, 6200, 6300, 12400, 12700, 14320, 16300, 17200, 17860, 18450, 21100, 21750, 26800] 
     for x in posicoes_drone:
         drone = Drone(img_drone,x)
         all_sprites.add(drone)
@@ -259,9 +259,8 @@ def fase_dificil(janela):
         all_sprites.add(portal)
         all_portais.add(portal)
 
-    posicao_moeda_x = [3550, 11450, 14250, 18300, 20850]
-    posicao_moeda_y = [ALTURA-ALTURA_CHAO, 430, 500, 500, 500]
-
+    posicao_moeda_x = [3550, 11680, 15920, 18680, 21050]
+    posicao_moeda_y = [500, 420, 420, 420, 500]
     i = 0
     while i<len(posicao_moeda_x):
         moeda = Moeda(img_moeda,posicao_moeda_x[i],posicao_moeda_y[i])
