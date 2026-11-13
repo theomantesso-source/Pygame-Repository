@@ -22,6 +22,8 @@ LARGURA_PORTAL_PULAR = 100
 ALTURA_PORTAL_PULAR = 280
 ALTURA_ESCUDO = 35
 LARGURA_ESCUDO = 35
+DISTANCIA_FINAL = 21800
+
 
 LARGURA_PORTAL_AGACHAR = 220
 ALTURA_PORTAL_AGACHAR = 120
@@ -166,7 +168,46 @@ class Moeda(pygame.sprite.Sprite):
             if self.rect.right<0:
                 self.kill()
 
+class Linha_chegada(pygame.sprite.Sprite):
+    def __init__(self,imagem, x):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = imagem
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.bottom = ALTURA-ALTURA_CHAO
+        self.mask = pygame.mask.from_surface(self.image)
 
+    def update(self):
+            self.rect.x -= VELOCIDADE_CENARIO
+
+
+def tela_final(janela,pontos,pontos_moedas,vidas):
+    img_fundo = pygame.image.load("Assets/Imgs/final_fase.png")
+    img_fundo = pygame.transform.scale(img_fundo, (LARGURA, ALTURA))
+    timer = pygame.time.Clock()
+    tela = True
+    fonte_titulo = pygame.font.Font("Assets/Fonts/PressStart2P.ttf",36)
+    fonte_info = pygame.font.Font("Assets/Fonts/PressStart2P.ttf",24)
+    texto_titulo = fonte_titulo.render(f"FASE CONCLUIDA!",True,(0,220,255))
+    texto_pontos = fonte_info.render(f"Pontos: {pontos}",True,(255,255,255))
+    texto_moedas = fonte_info.render(f"Moedas: {pontos_moedas//100}/5",True,(255,210,60))
+    texto_vidas = fonte_info.render(f"Pontos por vida: {(vidas)*500}  ",True,(255,0,0))
+    texto_final = fonte_info.render(f"Total de pontos: {((vidas)*500)+pontos}  ",True,(255,255,255))
+    
+
+    while tela:
+        timer.tick(30)
+        for evento in pygame.event.get():
+            if evento.type == pygame.QUIT:
+                tela = False
+
+        janela.blit(img_fundo,(0,0))
+        janela.blit(texto_titulo, (300,320))
+        janela.blit(texto_pontos,(370,420))
+        janela.blit(texto_moedas,(370,470))
+        janela.blit(texto_vidas,(370,520))
+        janela.blit(texto_final,(370,570))
+        pygame.display.update()
 
 def fase_dificil(janela):
     img_chao = pygame.image.load("Assets/Imgs/chao_futurista.png")
@@ -185,7 +226,9 @@ def fase_dificil(janela):
     img_vida = pygame.image.load("Assets/Imgs/vida_retro.png").convert_alpha()
     img_vida = pygame.transform.scale(img_vida, (LARGURA_ESCUDO,ALTURA_ESCUDO ))    
     img_moeda = pygame.image.load("Assets/Imgs/moeda_ouro.png").convert_alpha()
-    img_moeda = pygame.transform.scale(img_moeda, (50,50))  
+    img_moeda = pygame.transform.scale(img_moeda, (50,50)) 
+    img_chegada = pygame.image.load("Assets/Imgs/chegada_fim.png").convert_alpha()
+    img_chegada = pygame.transform.scale(img_chegada, (280,280))   
 
 
     imagem_robo_andando = []
@@ -209,6 +252,8 @@ def fase_dificil(janela):
     som_vida.set_volume(0.7)
     som_moeda = pygame.mixer.Sound("Assets/Sons/coleta_moeda_v2.wav")
     som_moeda.set_volume(0.7)
+    som_vitoria = pygame.mixer.Sound("Assets/Sons/vitoria.wav")
+    som_vitoria.set_volume(0.7)
 
 
 
@@ -224,10 +269,13 @@ def fase_dificil(janela):
     global VELOCIDADE_CENARIO
     VELOCIDADE_CENARIO = 15
 
+    linha_chegada = Linha_chegada(img_chegada,21900)
+    all_sprites.add(linha_chegada)
     vida = Vida(img_vida,9370)
     all_vidas = pygame.sprite.Group()
     all_sprites.add(vida)
     all_vidas.add(vida)
+
 
     posicoes_espinhos = [700, 1200, 1240, 1650, 1800, 1840, 2400, 2700, 2996, 3036, 3600, 3620, 3820, 4020, 4200, 4240, 5000, 5300, 5600, 6200, 6240, 6420, 8270, 8700, 9000, 9040, 10400, 10440, 11070, 11110, 11350, 11390, 12700, 12740, 13200, 13240, 14400, 14440, 14680, 15500, 15540, 15800, 15840, 17000, 17040, 17080, 17300, 18100, 18140, 18180, 18450, 18490, 19800, 19840, 19880, 21100, 21140, 21180]
     for x in posicoes_espinhos:
@@ -287,7 +335,8 @@ def fase_dificil(janela):
     deslocamento_chao = 0
     keydown = False
 
-    morrendo = False 
+    morrendo = False
+    vencendo = False
     pontos_moedas = 0
     while jogo:
         relogio.tick(FPS)
@@ -323,6 +372,15 @@ def fase_dificil(janela):
                 return "perdeu"
             continue
 
+
+        if vencendo == True:
+            if canal_vitoria.get_busy() == False:
+                pygame.mixer.music.play(-1)
+                tela_final(janela,pontos,pontos_moedas,life)
+                return "venceu"
+            continue
+
+    
         if keydown == True:
             player.jump()
 
@@ -358,6 +416,12 @@ def fase_dificil(janela):
         agora = pygame.time.get_ticks()
         distancia_percorrida += VELOCIDADE_CENARIO
         pontos = distancia_percorrida // 10 + pontos_moedas
+
+        if distancia_percorrida>=DISTANCIA_FINAL:
+            pygame.mixer.music.stop()
+            canal_vitoria = som_vitoria.play()
+            vencendo = True
+            continue
         
         deslocamento_chao -= VELOCIDADE_CENARIO
         if deslocamento_chao <= -LARGURA_BLOCO_CHAO:
