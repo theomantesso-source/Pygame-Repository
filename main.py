@@ -238,10 +238,16 @@ def fase_dificil(janela):
     intervalo_aceleracao = 15000
     velocidade_maxima = 19
     life = 0
+    distancia_percorrida = 0
+    pontos = 0
+    fonte_tex = pygame.font.Font("Assets/Fonts/PressStart2P.ttf", 24)
+    musica_fundo = pygame.mixer.music.load("Assets/Sons/musica_fundo.wav")
 
     while jogo:
         relogio.tick(FPS)
         agora = pygame.time.get_ticks()
+        distancia_percorrida += VELOCIDADE_CENARIO
+        pontos = distancia_percorrida // 10
 
         if agora - ultima_aceleracao>=intervalo_aceleracao:
             if VELOCIDADE_CENARIO<velocidade_maxima:
@@ -290,16 +296,18 @@ def fase_dificil(janela):
         if deslocamento_chao <= -LARGURA_BLOCO_CHAO:
             deslocamento_chao += LARGURA_BLOCO_CHAO
 
-
         janela.fill((8, 12, 32))
 
         for i in range(0, LARGURA + LARGURA_BLOCO_CHAO, LARGURA_BLOCO_CHAO):
             janela.blit(img_chao,(i + deslocamento_chao, ALTURA - ALTURA_CHAO))
 
         all_sprites.draw(janela)
+
         fonte = pygame.font.Font("Assets/Fonts/PressStart2P.ttf", 36)
-        texto_vida = fonte.render(f"Vidas: {life}",True,(255,0,0))
-        janela.blit(texto_vida, (20, 20))
+        texto_vida = fonte.render("♥ "*(life + 1),True,(255,0,0))
+        text_ponto = fonte_tex.render(f"Pontos: {pontos}",True,(255,255,255))
+        janela.blit(texto_vida, (20, 60))
+        janela.blit(text_ponto,(20,20))
 
         pygame.display.update()
 
