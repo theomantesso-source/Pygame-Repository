@@ -371,7 +371,7 @@ def fase_dificil(janela):
         all_sprites.draw(janela)
 
         fonte = pygame.font.Font("Assets/Fonts/PressStart2P.ttf", 36)
-        texto_vida = fonte.render("♥ "*(life + 1),True,(255,0,0))
+        texto_vida = fonte.render("♥"*(life + 1),True,(255,0,0))
         text_ponto = fonte_tex.render(f"Pontos: {pontos}",True,(255,255,255))
         janela.blit(texto_vida, (20, 60))
         janela.blit(text_ponto,(20,20))
