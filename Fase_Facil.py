@@ -1,7 +1,9 @@
 
 import pygame
-from constantes import LARGURA, ALTURA, ALTURA_CHAO, TAMANHO_JOGADOR
-from classes import jogador
+
+from constantes import LARGURA, ALTURA, ALTURA_CHAO, TAMANHO_JOGADOR, LARGURA_ESPINHO, ALTURA_ESPINHO
+from classes import jogador, Espinho
+
 
 def fase_facil(janela):
     relogio = pygame.time.Clock()
@@ -15,20 +17,35 @@ def fase_facil(janela):
 
     img_chao = pygame.transform.scale(img_chao, (330, ALTURA_CHAO))
 
-
+    TAMANHO_CAVERNICOLA = TAMANHO_JOGADOR + 20
+    
     imagem_robo_andando = []
 
-    for nome in ["robo_andando_1.png", "robo_andando_2.png"]:
+    
+    
+    for nome in ["cavernicola_andando_1.png", "cavernicola_andando_2.png"]:
         img_player = pygame.image.load("Assets/Imgs/" + nome).convert_alpha()
-        img_player = pygame.transform.scale(img_player, (TAMANHO_JOGADOR, TAMANHO_JOGADOR))
+        img_player = pygame.transform.scale(img_player, (TAMANHO_CAVERNICOLA, TAMANHO_CAVERNICOLA))
         imagem_robo_andando.append(img_player)
 
-    
-    img_pulo = pygame.image.load("Assets/Imgs/robo_pulando_v2.png").convert_alpha()
-    img_pulo = pygame.transform.scale(img_pulo, (TAMANHO_JOGADOR, TAMANHO_JOGADOR))
 
-    img_agachado = pygame.image.load("Assets/Imgs/robo_agachado.png").convert_alpha()
-    img_agachado = pygame.transform.scale(img_agachado, (TAMANHO_JOGADOR, TAMANHO_JOGADOR))
+
+    img_pulo = pygame.image.load("Assets/Imgs/cavernicola_pulando.png").convert_alpha()
+    img_pulo = pygame.transform.scale(img_pulo, (TAMANHO_CAVERNICOLA, TAMANHO_CAVERNICOLA))
+
+    
+    img_agachado = pygame.image.load("Assets/Imgs/cavernicola_agachado.png").convert_alpha()
+
+    altura_agachado = int(TAMANHO_CAVERNICOLA * 0.9)
+
+    img_agachado = pygame.transform.scale(img_agachado, (TAMANHO_CAVERNICOLA, altura_agachado))
+
+    quadro = pygame.Surface((TAMANHO_CAVERNICOLA, TAMANHO_CAVERNICOLA), pygame.SRCALPHA)
+
+    quadro.blit(img_agachado, (0, TAMANHO_CAVERNICOLA - altura_agachado))
+
+    img_agachado = quadro
+
 
     som_pulo = pygame.mixer.Sound("Assets/Sons/som_pulo.wav")
 
@@ -36,7 +53,33 @@ def fase_facil(janela):
     player = jogador(imagem_robo_andando, img_pulo, img_agachado, som_pulo)
 
     deslocamento_chao = 0
+
+
+    img_pedra = pygame.image.load("Assets/Imgs/espinho_pedra.png").convert_alpha()
+
+    LARGURA_PEDRA = int(LARGURA_ESPINHO * 1.3)
+    ALTURA_PEDRA = int(ALTURA_ESPINHO * 1.3)
+
+    img_pedra = pygame.transform.scale(img_pedra, (LARGURA_PEDRA, ALTURA_PEDRA))
+
+
     
+    all_pedras = pygame.sprite.Group()
+
+    posicoes_pedras = [700, 720, 1600, 1800]
+
+    for x in posicoes_pedras:
+        pedra = Espinho(img_pedra, x)
+        all_pedras.add(pedra)
+
+
+    
+    img_game_over = pygame.image.load("Assets/Imgs/game_over_TRex.png").convert()
+    img_game_over = pygame.transform.scale(img_game_over, (LARGURA, ALTURA))
+
+    perdeu = False
+
+
 
     while rodando:
         relogio.tick(30)
@@ -44,6 +87,11 @@ def fase_facil(janela):
         for evento in pygame.event.get():
             if evento.type == pygame.QUIT:
                 rodando = False
+
+        if perdeu:
+            janela.blit(img_game_over, (0, 0))
+            pygame.display.update()
+            continue
 
 
         teclas = pygame.key.get_pressed()
@@ -66,12 +114,29 @@ def fase_facil(janela):
 
         player.update()
 
+        all_pedras.update()
+
         janela.fill((135, 206, 235))
         
         for x in range(0, LARGURA + 330, 330):
             janela.blit(img_chao, (x + deslocamento_chao, ALTURA - ALTURA_CHAO))
 
         janela.blit(player.image, player.rect)
+
+
+        all_pedras.draw(janela)
+
+
+
+        colisao_pedra = pygame.sprite.spritecollide(
+            player, all_pedras, False, pygame.sprite.collide_mask
+        )
+
+        
+        if colisao_pedra:
+            perdeu = True
+
+
 
 
 
