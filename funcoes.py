@@ -43,17 +43,26 @@ def tela_game_over(janela,pontos):
     texto_tente = fonte_info.render(f"Tente novamente!",True,(255,255,255))
     total_ponto = fonte_info.render(f"Total pontos: {pontos}",True,(255,255,255))
 
+    img_inicio = pygame.image.load("Assets/Imgs/botao_inicio.png").convert_alpha()
+    img_inicio = pygame.transform.scale(img_inicio, (100, 100))
+    botao_inicio = img_inicio.get_rect(center=(LARGURA // 2, 650))    
+
     while tela:
         timer.tick(30)
         for evento in pygame.event.get():
             if evento.type == pygame.QUIT:
                 tela = False
+            if evento.type == pygame.MOUSEBUTTONDOWN:
+                if evento.button == 1:
+                    if botao_inicio.collidepoint(evento.pos):
+                        return "inicio"
 
         janela.blit(img_game_over,(0,0))
         janela.blit(texto_titulo, (300,220))
         janela.blit(texto_tente,(320,280))
         janela.blit(total_ponto,(310,400))
-   
+        janela.blit(img_inicio, botao_inicio)
+
         pygame.display.update()
 
 def tela_inicial(janela):
@@ -263,8 +272,8 @@ def fase_dificil(janela):
 
         if morrendo == True:
             if canal_morte.get_busy() == False:
-                tela_game_over(janela,pontos)
-                return "perdeu"
+                resultado = tela_game_over(janela,pontos)
+                return resultado
             continue
 
 

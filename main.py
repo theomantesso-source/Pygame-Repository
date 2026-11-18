@@ -8,11 +8,20 @@ pygame.init()
 janela = pygame.display.set_mode((LARGURA, ALTURA))
 pygame.display.set_caption("Evolution Race")
 
-escolha = tela_inicial(janela)
 
-if escolha == "facil":
-    fase_facil(janela)
-elif escolha == "dificil":
-    fase_dificil(janela)
+while True:
+    escolha = tela_inicial(janela)
+
+    if escolha == "facil":
+        resultado = fase_facil(janela)
+    elif escolha == "dificil":
+        resultado = fase_dificil(janela)
+    else:
+        break
+    
+    if resultado != "inicio":
+        break
+
+pygame.quit()
 
 pygame.quit()
