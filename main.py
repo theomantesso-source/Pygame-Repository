@@ -11,7 +11,7 @@ pygame.display.set_caption("Evolution Race")
 escolha = tela_inicial(janela)
 
 if escolha == "facil":
-    fase_dificil(janela)
+    fase_facil(janela)
 elif escolha == "dificil":
     fase_dificil(janela)
 

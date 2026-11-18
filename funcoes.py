@@ -69,6 +69,14 @@ def tela_inicial(janela):
     area_media = pygame.Rect(largura_area, 200, largura_area, ALTURA - 200)
     area_dificil = pygame.Rect(largura_area * 2, 200,LARGURA - largura_area * 2, ALTURA - 200)
 
+    img_facil = pygame.image.load("Assets/Imgs/botao_facil.png").convert_alpha()
+    img_facil = pygame.transform.scale(img_facil, (150, 150))
+    img_medio = pygame.image.load("Assets/Imgs/botao_medio.png").convert_alpha()
+    img_medio = pygame.transform.scale(img_medio, (150, 150))
+    img_dificil = pygame.image.load("Assets/Imgs/botao_dificil.png").convert_alpha()
+    img_dificil = pygame.transform.scale(img_dificil, (150, 150))
+
+
     while True:
         timer.tick(30)
 
@@ -85,7 +93,9 @@ def tela_inicial(janela):
                         return "dificil"
 
         janela.blit(img_inicio, (0, 0))
-
+        janela.blit(img_facil, (108, 540))
+        janela.blit(img_medio, (475, 540))
+        janela.blit(img_dificil, (842, 540))
 
         
         pygame.display.update()
@@ -403,7 +413,7 @@ def fase_facil(janela):
     img_game_over = pygame.transform.scale(img_game_over, (LARGURA, ALTURA))
 
     perdeu = False
-    vidas = 3
+    vidas = 2
 
     distancia_percorrida = 0
     pontos_moedas = 0
