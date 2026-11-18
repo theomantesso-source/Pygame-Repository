@@ -85,6 +85,9 @@ def tela_inicial(janela):
     img_dificil = pygame.image.load("Assets/Imgs/botao_dificil.png").convert_alpha()
     img_dificil = pygame.transform.scale(img_dificil, (150, 150))
 
+    pygame.mixer.music.load("Assets/Sons/menu_evolution_race_mais_alto.wav")
+    pygame.mixer.music.set_volume(0.7)
+    pygame.mixer.music.play(-1)
 
     while True:
         timer.tick(30)
