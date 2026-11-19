@@ -522,3 +522,10 @@ def fase_media(janela):
 
     img_chao = pygame.image.load("Assets/Imgs/chao_medieval.png").convert()
     img_chao = pygame.transform.scale(img_chao, (LARGURA_BLOCO_CHAO, ALTURA_CHAO))
+
+    imagens_andando = []
+
+    for nome in ["cavaleiro_andando_1.png", "cavaleiro_andando_2.png"]:
+        imagem = pygame.image.load("Assets/Imgs/" + nome).convert_alpha()
+        imagem = pygame.transform.scale(imagem, (TAMANHO_JOGADOR, TAMANHO_JOGADOR))
+        imagens_andando.append(imagem)
