@@ -99,9 +99,11 @@ def tela_inicial(janela):
             if evento.type == pygame.MOUSEBUTTONDOWN:
                 if evento.button == 1:
                     if area_facil.collidepoint(evento.pos):
+                        pygame.mixer.music.stop()
                         return "facil"
 
                     elif area_dificil.collidepoint(evento.pos):
+                        pygame.mixer.music.stop()
                         return "dificil"
 
         janela.blit(img_inicio, (0, 0))
@@ -261,15 +263,15 @@ def fase_dificil(janela):
 
 
             if evento.type == pygame.KEYDOWN:
-                if evento.key == pygame.K_UP or evento.key == pygame.K_SPACE:
+                if evento.key == pygame.K_UP or evento.key == pygame.K_SPACE or evento.key == pygame.K_w:
                     keydown = True
-                elif evento.key == pygame.K_DOWN:
+                elif evento.key == pygame.K_DOWN or evento.key == pygame.K_s:
                     player.agachar()
                 
             if evento.type == pygame.KEYUP:
-                if evento.key == pygame.K_UP or evento.key == pygame.K_SPACE:
+                if evento.key == pygame.K_UP or evento.key == pygame.K_SPACE or evento.key == pygame.K_w:
                     keydown = False
-                elif evento.key == pygame.K_DOWN:
+                elif evento.key == pygame.K_DOWN or evento.key == pygame.K_s:
                     player.agachado = False
             
 
