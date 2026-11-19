@@ -150,3 +150,18 @@ class Linha_chegada(pygame.sprite.Sprite):
 
     def update(self):
             self.rect.x -= VELOCIDADE_CENARIO
+
+class Faixa(pygame.sprite.Sprite):
+    def __init__(self, imagem, x):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = imagem
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.bottom = ALTURA - ALTURA_CHAO
+        self.mask = pygame.mask.from_surface(self.image)
+
+    def update(self):
+        self.rect.x -= VELOCIDADE_CENARIO
+
+        if self.rect.right < 0:
+            self.kill()
