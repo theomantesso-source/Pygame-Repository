@@ -23,5 +23,3 @@ while True:
         break
 
 pygame.quit()
-
-pygame.quit()
