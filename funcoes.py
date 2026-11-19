@@ -515,3 +515,10 @@ def fase_facil(janela):
         pygame.display.update()
 
     return "sair"
+
+def fase_media(janela):
+    img_fundo = pygame.image.load("Assets/Imgs/fundo_medieval.png").convert()
+    img_fundo = pygame.transform.scale(img_fundo, (LARGURA, ALTURA - ALTURA_CHAO))
+
+    img_chao = pygame.image.load("Assets/Imgs/chao_medieval.png").convert()
+    img_chao = pygame.transform.scale(img_chao, (LARGURA_BLOCO_CHAO, ALTURA_CHAO))
