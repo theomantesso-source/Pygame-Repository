@@ -620,5 +620,13 @@ def fase_media(janela):
     all_sprites.add(vida)
     all_vidas.add(vida)
 
+    for x in [1550, 5650, 9950, 15150, 20350]:
+        moeda = Moeda(img_moeda, x, ALTURA - ALTURA_CHAO - 75)
+        all_sprites.add(moeda)
+        all_coins.add(moeda)
+
+    linha_chegada = Linha_chegada(img_chegada, 21900)
+    all_sprites.add(linha_chegada)
+
 
 
