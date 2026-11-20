@@ -548,3 +548,9 @@ def fase_media(janela):
     img_faixa = pygame.image.load("Assets/Imgs/faixa_medieval.png").convert_alpha()
     img_faixa = pygame.transform.scale(img_faixa, (180, 16))
 
+    img_vida = pygame.image.load("Assets/Imgs/vida_retro.png").convert_alpha()
+    img_vida = pygame.transform.scale(img_vida, (LARGURA_ESCUDO, ALTURA_ESCUDO))
+
+    img_moeda = pygame.image.load("Assets/Imgs/moeda_ouro.png").convert_alpha()
+    img_moeda = pygame.transform.scale(img_moeda, (50, 50))
+
