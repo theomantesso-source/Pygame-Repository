@@ -587,4 +587,29 @@ def fase_media(janela):
 
     all_sprites.add(player)
 
+    posicoes_estacas = [
+        850, 1550, 1590, 2400, 3100, 3140, 3950,
+        4800, 5650, 5690, 6500, 7350, 7390, 8250,
+        9100, 9950, 9990, 10850, 11700, 12550,
+        12590, 13450, 14300, 15150, 15190, 16050,
+        16900, 17750, 17790, 18650, 19500,
+        20350, 20390, 21250
+    ]
+
+    for x in posicoes_estacas:
+        estaca = Espinho(img_estaca, x)
+        all_sprites.add(estaca)
+        all_espinhos.add(estaca)
+
+    posicoes_vigas = [
+        2000, 3500, 5250, 6950, 8700, 10400,
+        12100, 13850, 15600, 17300, 19000, 20800
+    ]
+
+    for x in posicoes_vigas:
+        viga = Cano(img_viga, x)
+        all_sprites.add(viga)
+        all_canos.add(viga)
+
+
 
