@@ -576,3 +576,15 @@ def fase_media(janela):
     som_vitoria = pygame.mixer.Sound("Assets/Sons/vitoria.wav")
     som_vitoria.set_volume(0.7)
 
+    player = jogador(imagens_andando, img_pulo, img_agachado, som_pulo)
+
+    all_sprites = pygame.sprite.Group()
+    all_espinhos = pygame.sprite.Group()
+    all_canos = pygame.sprite.Group()
+    all_vidas = pygame.sprite.Group()
+    all_coins = pygame.sprite.Group()
+    all_faixas = pygame.sprite.Group()
+
+    all_sprites.add(player)
+
+
