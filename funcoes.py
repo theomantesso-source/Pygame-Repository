@@ -611,5 +611,14 @@ def fase_media(janela):
         all_sprites.add(viga)
         all_canos.add(viga)
 
+    for x in [4250, 11150, 18050]:
+        faixa = Faixa(img_faixa, x)
+        all_sprites.add(faixa)
+        all_faixas.add(faixa)
+
+    vida = Vida(img_vida, 9550)
+    all_sprites.add(vida)
+    all_vidas.add(vida)
+
 
 
