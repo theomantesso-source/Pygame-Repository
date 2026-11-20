@@ -628,5 +628,28 @@ def fase_media(janela):
     linha_chegada = Linha_chegada(img_chegada, 21900)
     all_sprites.add(linha_chegada)
 
+    fonte = pygame.font.Font("Assets/Fonts/PressStart2P.ttf", 24)
+    fonte_bonus = pygame.font.Font("Assets/Fonts/PressStart2P.ttf", 16)
+
+    pygame.mixer.music.load("Assets/Sons/musica_fundo.wav")
+    pygame.mixer.music.set_volume(0.7)
+    pygame.mixer.music.play(-1)
+
+    relogio = pygame.time.Clock()
+
+    vidas = 2
+    pontos = 0
+    pontos_moedas = 0
+    distancia_percorrida = 0
+    deslocamento_chao = 0
+
+    velocidade_normal = 15
+    fim_bonus = 0
+    fracao_extra = 0.0
+
+    keydown = False
+    resultado = None
+    canal = None
+
 
 
