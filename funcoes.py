@@ -558,3 +558,21 @@ def fase_media(janela):
     img_moeda = pygame.image.load("Assets/Imgs/moeda_ouro.png").convert_alpha()
     img_moeda = pygame.transform.scale(img_moeda, (50, 50))
 
+    som_pulo = pygame.mixer.Sound("Assets/Sons/som_pulo.wav")
+    som_pulo.set_volume(0.3)
+
+    som_batida = pygame.mixer.Sound("Assets/Sons/batida_quebra.wav")
+    som_batida.set_volume(0.5)
+
+    som_morte = pygame.mixer.Sound("Assets/Sons/morte.wav")
+    som_morte.set_volume(0.5)
+
+    som_vida = pygame.mixer.Sound("Assets/Sons/coleta_vida.wav")
+    som_vida.set_volume(0.7)
+
+    som_moeda = pygame.mixer.Sound("Assets/Sons/coleta_moeda_v2.wav")
+    som_moeda.set_volume(0.7)
+
+    som_vitoria = pygame.mixer.Sound("Assets/Sons/vitoria.wav")
+    som_vitoria.set_volume(0.7)
+
