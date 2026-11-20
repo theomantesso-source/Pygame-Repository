@@ -529,3 +529,9 @@ def fase_media(janela):
         imagem = pygame.image.load("Assets/Imgs/" + nome).convert_alpha()
         imagem = pygame.transform.scale(imagem, (TAMANHO_JOGADOR, TAMANHO_JOGADOR))
         imagens_andando.append(imagem)
+    
+    img_pulo = pygame.image.load("Assets/Imgs/cavaleiro_pulando.png").convert_alpha()
+    img_pulo = pygame.transform.scale(img_pulo, (TAMANHO_JOGADOR, TAMANHO_JOGADOR))
+
+    img_agachado = pygame.image.load("Assets/Imgs/cavaleiro_agachado.png").convert_alpha()
+    img_agachado = pygame.transform.scale(img_agachado, (TAMANHO_JOGADOR, TAMANHO_JOGADOR))
