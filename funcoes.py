@@ -535,3 +535,10 @@ def fase_media(janela):
 
     img_agachado = pygame.image.load("Assets/Imgs/cavaleiro_agachado.png").convert_alpha()
     img_agachado = pygame.transform.scale(img_agachado, (TAMANHO_JOGADOR, TAMANHO_JOGADOR))
+
+    img_estaca = pygame.image.load("Assets/Imgs/estaca_medieval.png").convert_alpha()
+    img_estaca = pygame.transform.scale(img_estaca, (LARGURA_ESPINHO, ALTURA_ESPINHO))
+
+    img_viga = pygame.image.load("Assets/Imgs/viga_medieval.png").convert_alpha()
+    img_viga = pygame.transform.scale(img_viga, (LARGURA_CANO, ALTURA_CANO))
+
