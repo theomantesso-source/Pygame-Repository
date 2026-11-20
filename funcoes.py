@@ -106,6 +106,10 @@ def tela_inicial(janela):
                         pygame.mixer.music.stop()
                         return "dificil"
 
+                    elif area_media.collidepoint(evento.pos):
+                        pygame.mixer.music.stop()
+                        return "medio"
+
         janela.blit(img_inicio, (0, 0))
         janela.blit(img_facil, (108, 540))
         janela.blit(img_medio, (475, 540))
