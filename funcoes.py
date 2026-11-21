@@ -16,11 +16,19 @@ def tela_final(janela,pontos,pontos_moedas,vidas):
     texto_final = fonte_info.render(f"Total de pontos: {((vidas)*500)+pontos}  ",True,(255,255,255))
     
 
+    img_inicio = pygame.image.load("Assets/Imgs/botao_inicio.png").convert_alpha()
+    img_inicio = pygame.transform.scale(img_inicio, (100, 100))
+    botao_inicio = img_inicio.get_rect(center=(LARGURA // 2, 650))
+
     while tela:
         timer.tick(30)
         for evento in pygame.event.get():
             if evento.type == pygame.QUIT:
                 tela = False
+            if evento.type == pygame.MOUSEBUTTONDOWN:
+                if evento.button == 1:
+                    if botao_inicio.collidepoint(evento.pos):
+                        return "inicio"
 
         janela.blit(img_fundo,(0,0))
         janela.blit(texto_titulo, (300,320))
@@ -28,6 +36,7 @@ def tela_final(janela,pontos,pontos_moedas,vidas):
         janela.blit(texto_moedas,(370,470))
         janela.blit(texto_vidas,(370,520))
         janela.blit(texto_final,(370,570))
+        janela.blit(img_inicio, botao_inicio)
         pygame.display.update()
 
 def tela_game_over(janela,pontos):
@@ -121,6 +130,9 @@ def tela_inicial(janela):
         
 
 def fase_dificil(janela):
+    img_fundo = pygame.image.load("Assets/Imgs/fundo_futurista.png").convert()
+    img_fundo = pygame.transform.scale(img_fundo, (LARGURA, ALTURA - ALTURA_CHAO))
+
     img_chao = pygame.image.load("Assets/Imgs/chao_futurista.png")
     img_chao = pygame.transform.scale(img_chao, (LARGURA_BLOCO_CHAO, ALTURA_CHAO))
 
@@ -195,7 +207,7 @@ def fase_dificil(janela):
         all_sprites.add(espinho)
         all_espinhos.add(espinho)
  
-    posicoes_drone = [2650, 2800, 3700, 4200, 4520, 5800, 6050, 6200, 6300, 12400, 12700, 14320, 16300, 17200, 17860, 18450, 21100, 21750, 26800] 
+    posicoes_drone = [2650, 2800, 3700, 4200, 4520, 5800, 6050, 6200, 6300, 12330,12800,14320, 16300, 17400, 18260, 18450, 21250, 21850, 26800] 
     for x in posicoes_drone:
         drone = Drone(img_drone,x)
         all_sprites.add(drone)
@@ -289,8 +301,7 @@ def fase_dificil(janela):
         if vencendo == True:
             if canal_vitoria.get_busy() == False:
                 pygame.mixer.music.play(-1)
-                tela_final(janela,pontos,pontos_moedas,life)
-                return "venceu"
+                return tela_final(janela,pontos,pontos_moedas,life)
             continue
 
     
@@ -317,7 +328,7 @@ def fase_dificil(janela):
 
         if colisao_moedas!=[]:
             som_moeda.play()
-            pontos_moedas+=100
+            pontos_moedas+=200
 
         
         if life<0:
@@ -328,9 +339,9 @@ def fase_dificil(janela):
         
         agora = pygame.time.get_ticks()
         distancia_percorrida += VELOCIDADE_CENARIO
-        pontos = distancia_percorrida // 10 + pontos_moedas
+        pontos = distancia_percorrida // 5 + pontos_moedas
 
-        if distancia_percorrida>=DISTANCIA_FINAL:
+        if linha_chegada.rect.centerx <= player.rect.centerx:
             pygame.mixer.music.stop()
             canal_vitoria = som_vitoria.play()
             vencendo = True
@@ -340,7 +351,7 @@ def fase_dificil(janela):
         if deslocamento_chao <= -LARGURA_BLOCO_CHAO:
             deslocamento_chao += LARGURA_BLOCO_CHAO
 
-        janela.fill((8, 12, 32))
+        janela.blit(img_fundo, (0, 0))
 
         for i in range(0, LARGURA + LARGURA_BLOCO_CHAO, LARGURA_BLOCO_CHAO):
             janela.blit(img_chao,(i + deslocamento_chao, ALTURA - ALTURA_CHAO))
@@ -534,11 +545,19 @@ def tela_final_media(janela,pontos,pontos_moedas,vidas):
     texto_final = fonte_info.render(f"Total de pontos: {((vidas)*500)+pontos}  ",True,(255,255,255))
     
 
+    img_inicio = pygame.image.load("Assets/Imgs/botao_inicio_medieval.png").convert_alpha()
+    img_inicio = pygame.transform.scale(img_inicio, (100, 100))
+    botao_inicio = img_inicio.get_rect(center=(LARGURA // 2, 650))
+
     while tela:
         timer.tick(30)
         for evento in pygame.event.get():
             if evento.type == pygame.QUIT:
                 tela = False
+            if evento.type == pygame.MOUSEBUTTONDOWN:
+                if evento.button == 1:
+                    if botao_inicio.collidepoint(evento.pos):
+                        return "inicio"
 
         janela.blit(img_fundo,(0,0))
         janela.blit(texto_titulo, (300,320))
@@ -546,6 +565,7 @@ def tela_final_media(janela,pontos,pontos_moedas,vidas):
         janela.blit(texto_moedas,(370,470))
         janela.blit(texto_vidas,(370,520))
         janela.blit(texto_final,(370,570))
+        janela.blit(img_inicio, botao_inicio)
         pygame.display.update()
 
 
@@ -736,8 +756,7 @@ def fase_media(janela):
         if resultado is not None:
             if canal is None or not canal.get_busy():
                 if resultado == "venceu":
-                    tela_final_media(janela, pontos, pontos_moedas, vidas)
-                    return "venceu"
+                    return tela_final_media(janela, pontos, pontos_moedas, vidas)
 
                 else:
                     return tela_game_over_media(janela, pontos)
