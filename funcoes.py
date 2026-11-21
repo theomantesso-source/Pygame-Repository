@@ -753,5 +753,49 @@ def fase_media(janela):
         if deslocamento_chao <= -LARGURA_BLOCO_CHAO:
             deslocamento_chao += LARGURA_BLOCO_CHAO
 
+        janela.blit(img_fundo, (0, 0))
+
+        for x in range(
+            0, LARGURA + LARGURA_BLOCO_CHAO, LARGURA_BLOCO_CHAO
+        ):
+            janela.blit(
+                img_chao,
+                (x + deslocamento_chao, ALTURA - ALTURA_CHAO)
+            )
+
+        all_sprites.draw(janela)
+
+        texto_pontos = fonte.render(
+            f"Pontos: {pontos}", True, (255, 255, 255)
+        )
+
+        texto_vidas = fonte.render(
+            f"Vidas: {max(0, vidas)}", True, (255, 255, 255)
+        )
+
+        janela.blit(texto_pontos, (20, 20))
+        janela.blit(texto_vidas, (20, 60))
+
+        if agora < fim_bonus:
+            segundos_restantes = (fim_bonus - agora) / 1000
+
+            texto_bonus = fonte_bonus.render(
+                f"VELOCIDADE +100%: {segundos_restantes:.1f}s",
+                True, (111, 255, 206)
+            )
+            janela.blit(texto_bonus, (20, 100))
+
+        pygame.display.update()
+
+        if vidas <= 0:
+            pygame.mixer.music.stop()
+            canal = som_morte.play()
+            resultado = "perdeu"
+
+        elif linha_chegada.rect.centerx <= player.rect.centerx:
+            pygame.mixer.music.stop()
+            canal = som_vitoria.play()
+            resultado = "venceu"
+
 
 
