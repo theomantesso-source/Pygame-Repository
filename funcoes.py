@@ -457,6 +457,21 @@ def fase_facil(janela):
     img_agachado = quadro
 
     som_pulo = pygame.mixer.Sound("Assets/Sons/som_pulo.wav")
+    som_pulo.set_volume(0.3)
+
+
+    som_batida = pygame.mixer.Sound("Assets/Sons/batida_quebra.wav")
+    som_batida.set_volume(0.5)
+
+    som_morte = pygame.mixer.Sound("Assets/Sons/morte.wav")
+    som_morte.set_volume(0.5)
+
+
+
+    pygame.mixer.music.load("Assets/Sons/musica_fundo.wav")
+    pygame.mixer.music.set_volume(0.7)
+    pygame.mixer.music.play(-1)
+
 
     player = jogador(imagem_robo_andando, img_pulo, img_agachado, som_pulo)
 
@@ -600,6 +615,7 @@ def fase_facil(janela):
 
 
         if linha_chegada.rect.centerx <= player.rect.centerx:
+            pygame.mixer.music.stop()
             return tela_final_facil(janela, pontos, vidas)
 
 
@@ -616,7 +632,12 @@ def fase_facil(janela):
         if colisao_pedra or colisao_pterodatilo:
             vidas -= 1
 
+            if vidas > 0:
+                som_batida.play()
+
             if vidas == 0:
+                pygame.mixer.music.stop()
+                som_morte.play()
                 perdeu = True
 
         janela.blit(img_fundo, (0, 0))
