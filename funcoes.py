@@ -469,6 +469,14 @@ def fase_facil(janela):
     som_vitoria = pygame.mixer.Sound("Assets/Sons/vitoria.wav")
     som_vitoria.set_volume(0.7)
 
+    som_vida = pygame.mixer.Sound("Assets/Sons/coleta_vida.wav")
+    som_vida.set_volume(0.7)
+
+    som_moeda = pygame.mixer.Sound("Assets/Sons/coleta_moeda_v2.wav")
+    som_moeda.set_volume(0.7)
+
+
+
 
 
 
@@ -520,6 +528,27 @@ def fase_facil(janela):
         pterodatilo.rect.bottom = ALTURA - ALTURA_CHAO - 72
         all_pterodatilos.add(pterodatilo)
 
+
+    img_vida = pygame.image.load("Assets/Imgs/vida_retro.png").convert_alpha()
+    img_vida = pygame.transform.scale(img_vida, (LARGURA_ESCUDO, ALTURA_ESCUDO))
+
+    all_vidas = pygame.sprite.Group()
+
+    vida = Vida(img_vida, 3463)
+    vida.rect.bottom = ALTURA - ALTURA_CHAO - 50
+    all_vidas.add(vida)
+
+
+    img_moeda = pygame.image.load("Assets/Imgs/moeda_ouro.png").convert_alpha()
+    img_moeda = pygame.transform.scale(img_moeda, (50, 50))
+
+    all_moedas = pygame.sprite.Group()
+
+    moeda = Moeda(img_moeda, 2100, ALTURA - ALTURA_CHAO - 60)
+    all_moedas.add(moeda)
+
+    moeda = Moeda(img_moeda, 5285, ALTURA - ALTURA_CHAO - 120)
+    all_moedas.add(moeda)
 
     
     img_chegada = pygame.image.load("Assets/Imgs/Chegada_Pre_Historica.png").convert_alpha()
@@ -629,6 +658,22 @@ def fase_facil(janela):
             if pterodatilo.rect.right < 0:
                 pterodatilo.kill()
 
+
+        for vida in all_vidas:
+            vida.rect.x -= velocidade_fase
+
+            if vida.rect.right < 0:
+                vida.kill()
+
+        
+        for moeda in all_moedas:
+            moeda.rect.x -= velocidade_fase
+
+            if moeda.rect.right < 0:
+                moeda.kill()
+
+
+
         linha_chegada.rect.x -= velocidade_fase
 
 
@@ -649,6 +694,25 @@ def fase_facil(janela):
             player, all_pterodatilos, True, pygame.sprite.collide_mask
         )
 
+
+        colisao_vida = pygame.sprite.spritecollide(
+            player, all_vidas, True, pygame.sprite.collide_mask
+        )
+
+        if colisao_vida:
+            vidas += 1
+            som_vida.play()
+
+        colisao_moeda = pygame.sprite.spritecollide(
+            player, all_moedas, True, pygame.sprite.collide_mask
+        )
+
+        if colisao_moeda:
+            pontos_moedas += 100 * len(colisao_moeda)
+            pontos += 100 * len(colisao_moeda)
+            som_moeda.play()
+
+
         if colisao_pedra or colisao_pterodatilo:
             vidas -= 1
 
@@ -668,6 +732,13 @@ def fase_facil(janela):
         janela.blit(player.image, player.rect)
         all_pedras.draw(janela)
         all_pterodatilos.draw(janela)
+
+        all_vidas.draw(janela)
+
+
+        all_moedas.draw(janela)
+
+
 
         janela.blit(linha_chegada.image, linha_chegada.rect)
 
