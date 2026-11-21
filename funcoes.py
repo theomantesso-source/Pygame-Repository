@@ -562,7 +562,7 @@ def tela_game_over_media(janela,pontos):
     texto_tente = fonte_info.render(f"Tente novamente!",True,(255,255,255))
     total_ponto = fonte_info.render(f"Total pontos: {pontos}",True,(255,255,255))
 
-    img_inicio = pygame.image.load("Assets/Imgs/botao_inicio.png").convert_alpha()
+    img_inicio = pygame.image.load("Assets/Imgs/botao_inicio_medieval.png").convert_alpha()
     img_inicio = pygame.transform.scale(img_inicio, (100, 100))
     botao_inicio = img_inicio.get_rect(center=(LARGURA // 2, 650))    
 
