@@ -549,7 +549,7 @@ def fase_media(janela):
     img_chegada = pygame.image.load("Assets/Imgs/chegada_medieval.png").convert_alpha()
     img_chegada = pygame.transform.scale(img_chegada, (180, 250))
 
-    img_faixa = pygame.image.load("Assets/Imgs/faixa_medieval.png").convert_alpha()
+    img_faixa = pygame.image.load("Assets/Imgs/faixa_runas.png").convert_alpha()
     img_faixa = pygame.transform.scale(img_faixa, (180, 16))
 
     img_vida = pygame.image.load("Assets/Imgs/vida_retro.png").convert_alpha()
@@ -650,6 +650,152 @@ def fase_media(janela):
     keydown = False
     resultado = None
     canal = None
+
+    while True:
+        relogio.tick(30)
+        agora = pygame.time.get_ticks()
+
+        for evento in pygame.event.get():
+            if evento.type == pygame.QUIT:
+                pygame.mixer.music.stop()
+                return "sair"
+
+            if evento.type == pygame.KEYDOWN:
+                if evento.key in [
+                    pygame.K_UP, pygame.K_SPACE, pygame.K_w
+                ]:
+                    keydown = True
+
+                elif evento.key in [pygame.K_DOWN, pygame.K_s]:
+                    player.agachar()
+
+            if evento.type == pygame.KEYUP:
+                if evento.key in [
+                    pygame.K_UP, pygame.K_SPACE, pygame.K_w
+                ]:
+                    keydown = False
+
+                elif evento.key in [pygame.K_DOWN, pygame.K_s]:
+                    player.agachado = False
+
+        if resultado is not None:
+            if canal is None or not canal.get_busy():
+                if resultado == "venceu":
+                    tela_final(janela, pontos, pontos_moedas, vidas)
+                    return "venceu"
+
+                else:
+                    return tela_game_over(janela, pontos)
+
+            continue
+
+        if keydown:
+            player.jump()
+
+        # Ativa somente ao passar pela faixa com os pes no chao.
+        if player.rect.bottom == ALTURA - ALTURA_CHAO:
+            for faixa in list(all_faixas):
+                if (player.rect.right > faixa.rect.left
+                        and player.rect.left < faixa.rect.right):
+                    fim_bonus = agora + 3000
+
+                    # Continua desenhada, mas nao ativa novamente.
+                    all_faixas.remove(faixa)
+
+        deslocamento_extra = 0
+
+        if agora < fim_bonus:
+            # Aumento de 100%: adiciona a velocidade normal inteira.
+            fracao_extra += velocidade_normal * 1.0
+            deslocamento_extra = int(fracao_extra)
+            fracao_extra -= deslocamento_extra
+        else:
+            fracao_extra = 0.0
+
+        # Atualizacao normal das classes existentes.
+        all_sprites.update()
+
+        # Aceleracao adicional apenas dos elementos do cenario.
+        if deslocamento_extra > 0:
+            for sprite in all_sprites:
+                if sprite is not player:
+                    sprite.rect.x -= deslocamento_extra
+
+        velocidade = velocidade_normal + deslocamento_extra
+
+        colisao_espinhos = pygame.sprite.spritecollide(player, all_espinhos, True, pygame.sprite.collide_mask)
+
+        colisao_canos = pygame.sprite.spritecollide(player, all_canos, True, pygame.sprite.collide_mask)
+
+        colisao_vidas = pygame.sprite.spritecollide(player, all_vidas, True, pygame.sprite.collide_mask)
+
+        colisao_moedas = pygame.sprite.spritecollide(player, all_coins, True, pygame.sprite.collide_mask)
+
+        if colisao_espinhos or colisao_canos:
+            vidas -= 1
+
+            if vidas > 0:
+                som_batida.play()
+
+        if colisao_vidas:
+            vidas += len(colisao_vidas)
+            som_vida.play()
+
+        if colisao_moedas:
+            pontos_moedas += 100 * len(colisao_moedas)
+            som_moeda.play()
+
+        distancia_percorrida += velocidade
+        pontos = distancia_percorrida // 10 + pontos_moedas
+
+        deslocamento_chao -= velocidade
+
+        if deslocamento_chao <= -LARGURA_BLOCO_CHAO:
+            deslocamento_chao += LARGURA_BLOCO_CHAO
+
+        janela.blit(img_fundo, (0, 0))
+
+        for x in range(
+            0, LARGURA + LARGURA_BLOCO_CHAO, LARGURA_BLOCO_CHAO
+        ):
+            janela.blit(
+                img_chao,
+                (x + deslocamento_chao, ALTURA - ALTURA_CHAO)
+            )
+
+        all_sprites.draw(janela)
+
+        texto_pontos = fonte.render(
+            f"Pontos: {pontos}", True, (255, 255, 255)
+        )
+
+        texto_vidas = fonte.render(
+            f"Vidas: {max(0, vidas)}", True, (255, 255, 255)
+        )
+
+        janela.blit(texto_pontos, (20, 20))
+        janela.blit(texto_vidas, (20, 60))
+
+        if agora < fim_bonus:
+            segundos_restantes = (fim_bonus - agora) / 1000
+
+            texto_bonus = fonte_bonus.render(
+                f"VELOCIDADE +100%: {segundos_restantes:.1f}s",
+                True, (111, 255, 206)
+            )
+            janela.blit(texto_bonus, (20, 100))
+
+        pygame.display.update()
+
+        if vidas <= 0:
+            pygame.mixer.music.stop()
+            canal = som_morte.play()
+            resultado = "perdeu"
+
+        elif linha_chegada.rect.centerx <= player.rect.centerx:
+            pygame.mixer.music.stop()
+            canal = som_vitoria.play()
+            resultado = "venceu"
 
 
 
