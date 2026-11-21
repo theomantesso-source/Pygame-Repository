@@ -637,6 +637,9 @@ def fase_media(janela):
     img_faixa = pygame.image.load("Assets/Imgs/faixa_runas.png").convert_alpha()
     img_faixa = pygame.transform.scale(img_faixa, (180, 16))
 
+    img_vida = pygame.image.load("Assets/Imgs/vida_retro.png").convert_alpha()
+    img_vida = pygame.transform.scale(img_vida, (LARGURA_ESCUDO, ALTURA_ESCUDO))
+
     img_moeda = pygame.image.load("Assets/Imgs/moeda_ouro.png").convert_alpha()
     img_moeda = pygame.transform.scale(img_moeda, (50, 50))
 
@@ -649,6 +652,9 @@ def fase_media(janela):
     som_morte = pygame.mixer.Sound("Assets/Sons/morte.wav")
     som_morte.set_volume(0.5)
 
+    som_vida = pygame.mixer.Sound("Assets/Sons/coleta_vida.wav")
+    som_vida.set_volume(0.7)
+
     som_moeda = pygame.mixer.Sound("Assets/Sons/coleta_moeda_v2.wav")
     som_moeda.set_volume(0.7)
 
@@ -660,6 +666,7 @@ def fase_media(janela):
     all_sprites = pygame.sprite.Group()
     all_espinhos = pygame.sprite.Group()
     all_canos = pygame.sprite.Group()
+    all_vidas = pygame.sprite.Group()
     all_coins = pygame.sprite.Group()
     all_faixas = pygame.sprite.Group()
 
@@ -693,6 +700,10 @@ def fase_media(janela):
         faixa = Faixa(img_faixa, x)
         all_sprites.add(faixa)
         all_faixas.add(faixa)
+
+    vida = Vida(img_vida, 9550)
+    all_sprites.add(vida)
+    all_vidas.add(vida)
 
     for x in [1550, 5650, 9950, 15150, 20350]:
         moeda = Moeda(img_moeda, x, ALTURA - ALTURA_CHAO - 75)
@@ -801,6 +812,8 @@ def fase_media(janela):
 
         colisao_canos = pygame.sprite.spritecollide(player, all_canos, True, pygame.sprite.collide_mask)
 
+        colisao_vidas = pygame.sprite.spritecollide(player, all_vidas, True, pygame.sprite.collide_mask)
+
         colisao_moedas = pygame.sprite.spritecollide(player, all_coins, True, pygame.sprite.collide_mask)
 
         if colisao_espinhos or colisao_canos:
@@ -808,6 +821,10 @@ def fase_media(janela):
 
             if vidas > 0:
                 som_batida.play()
+
+        if colisao_vidas:
+            vidas += 1
+            som_vida.play()
 
         if colisao_moedas:
             pontos_moedas += 100 * len(colisao_moedas)
