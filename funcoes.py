@@ -390,6 +390,11 @@ def tela_final_facil(janela, pontos, vidas):
     fonte_titulo = pygame.font.Font("Assets/Fonts/PressStart2P.ttf", 36)
     fonte_texto = pygame.font.Font("Assets/Fonts/PressStart2P.ttf", 24)
 
+
+    bonus_vidas = vidas * 500
+    pontos_finais = pontos + bonus_vidas
+
+
     relogio = pygame.time.Clock()
 
     while True:
@@ -406,9 +411,13 @@ def tela_final_facil(janela, pontos, vidas):
 
         janela.blit(img_fundo, (0, 0))
 
-        titulo = fonte_titulo.render("FASE CONCLUIDA!", True, (255, 220, 0))
         texto_pontos = fonte_texto.render(f"Pontos: {pontos}", True, (255, 255, 255))
         texto_vidas = fonte_texto.render(f"Vidas restantes: {vidas}", True, (255, 255, 255))
+        texto_bonus = fonte_texto.render(f"Bonus de vidas: {bonus_vidas}", True, (255, 220, 0))
+        texto_total = fonte_texto.render(f"Total de pontos: {pontos_finais}", True, (255, 255, 255))
+
+
+        titulo = fonte_titulo.render("FASE CONCLUIDA!", True, (255, 220, 0))
 
         janela.blit(titulo, titulo.get_rect(center=(LARGURA // 2, 220)))
         janela.blit(texto_pontos, texto_pontos.get_rect(center=(LARGURA // 2, 320)))
