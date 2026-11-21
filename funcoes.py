@@ -502,7 +502,8 @@ def fase_facil(janela):
         all_pterodatilos.add(pterodatilo)
 
 
-    img_chegada = pygame.image.load("Assets/Imgs/chegada_fim.png").convert_alpha()
+    
+    img_chegada = pygame.image.load("Assets/Imgs/Chegada_Pre_Historica.png").convert_alpha()
     img_chegada = pygame.transform.scale(img_chegada, (180, 200))
 
     linha_chegada = Linha_chegada(img_chegada, 14500)
