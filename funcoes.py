@@ -16,19 +16,24 @@ def tela_final(janela,pontos,pontos_moedas,vidas):
     texto_final = fonte_info.render(f"Total de pontos: {((vidas)*500)+pontos}  ",True,(255,255,255))
     
 
-    img_inicio = pygame.image.load("Assets/Imgs/botao_inicio.png").convert_alpha()
+
+    img_inicio = pygame.image.load("Assets/Imgs/Botao_inicio_pre_historico.png").convert_alpha()
     img_inicio = pygame.transform.scale(img_inicio, (100, 100))
-    botao_inicio = img_inicio.get_rect(center=(LARGURA // 2, 650))
+    botao_inicio = img_inicio.get_rect(center=(LARGURA // 2, 600))
+
 
     while tela:
         timer.tick(30)
         for evento in pygame.event.get():
             if evento.type == pygame.QUIT:
-                tela = False
+                return "sair"
+
             if evento.type == pygame.MOUSEBUTTONDOWN:
                 if evento.button == 1:
                     if botao_inicio.collidepoint(evento.pos):
                         return "inicio"
+
+
 
         janela.blit(img_fundo,(0,0))
         janela.blit(texto_titulo, (300,320))
@@ -42,6 +47,7 @@ def tela_final(janela,pontos,pontos_moedas,vidas):
 def tela_game_over(janela,pontos):
     img_game_over = pygame.image.load("Assets/Imgs/game_over.png")
     img_game_over = pygame.transform.scale(img_game_over, (LARGURA,ALTURA)) 
+
   
     timer = pygame.time.Clock()
     tela = True
@@ -369,7 +375,52 @@ def fase_dificil(janela):
     return "sair"
 
 
-def fase_facil(janela):
+
+def tela_final_facil(janela, pontos, vidas):
+    
+    img_fundo = pygame.image.load("Assets/Imgs/final_homem_das_cavernas.png").convert()
+
+    img_fundo = pygame.transform.scale(img_fundo, (LARGURA, ALTURA))
+
+    
+    img_inicio = pygame.image.load("Assets/Imgs/Botao_inicio_pre_historico.png").convert_alpha()
+    img_inicio = pygame.transform.scale(img_inicio, (100, 100))
+    botao_inicio = img_inicio.get_rect(center=(LARGURA // 2, 580))
+
+    fonte_titulo = pygame.font.Font("Assets/Fonts/PressStart2P.ttf", 36)
+    fonte_texto = pygame.font.Font("Assets/Fonts/PressStart2P.ttf", 24)
+
+    relogio = pygame.time.Clock()
+
+    while True:
+        relogio.tick(30)
+
+        for evento in pygame.event.get():
+            if evento.type == pygame.QUIT:
+                return "sair"
+
+            if evento.type == pygame.MOUSEBUTTONDOWN:
+                if evento.button == 1:
+                    if botao_inicio.collidepoint(evento.pos):
+                        return "inicio"
+
+        janela.blit(img_fundo, (0, 0))
+
+        titulo = fonte_titulo.render("FASE CONCLUIDA!", True, (255, 220, 0))
+        texto_pontos = fonte_texto.render(f"Pontos: {pontos}", True, (255, 255, 255))
+        texto_vidas = fonte_texto.render(f"Vidas restantes: {vidas}", True, (255, 255, 255))
+
+        janela.blit(titulo, titulo.get_rect(center=(LARGURA // 2, 220)))
+        janela.blit(texto_pontos, texto_pontos.get_rect(center=(LARGURA // 2, 320)))
+        janela.blit(texto_vidas, texto_vidas.get_rect(center=(LARGURA // 2, 380)))
+
+        janela.blit(img_inicio, botao_inicio)
+
+        pygame.display.update()
+
+
+
+def fase_facil(janela):     
     relogio = pygame.time.Clock()
     rodando = True
     velocidade_fase = 10
@@ -450,8 +501,21 @@ def fase_facil(janela):
         pterodatilo.rect.bottom = ALTURA - ALTURA_CHAO - 72
         all_pterodatilos.add(pterodatilo)
 
+
+    img_chegada = pygame.image.load("Assets/Imgs/chegada_fim.png").convert_alpha()
+    img_chegada = pygame.transform.scale(img_chegada, (180, 200))
+
+    linha_chegada = Linha_chegada(img_chegada, 14500)
+
+
     img_game_over = pygame.image.load("Assets/Imgs/game_over_TRex.png").convert()
     img_game_over = pygame.transform.scale(img_game_over, (LARGURA, ALTURA))
+
+
+    img_inicio = pygame.image.load("Assets/Imgs/Botao_inicio_pre_historico.png").convert_alpha()
+    img_inicio = pygame.transform.scale(img_inicio, (100, 100))
+    botao_inicio = img_inicio.get_rect(center=(LARGURA // 2, 600))
+
 
     perdeu = False
     vidas = 2
@@ -468,9 +532,16 @@ def fase_facil(janela):
     while rodando:
         relogio.tick(30)
 
+
         for evento in pygame.event.get():
             if evento.type == pygame.QUIT:
                 rodando = False
+
+            if perdeu and evento.type == pygame.MOUSEBUTTONDOWN:
+                if evento.button == 1:
+                    if botao_inicio.collidepoint(evento.pos):
+                        return "inicio"
+
 
         if not rodando:
             break
@@ -484,10 +555,14 @@ def fase_facil(janela):
 
             janela.blit(titulo, titulo.get_rect(center=(LARGURA // 2, 100)))
             janela.blit(mensagem, mensagem.get_rect(center=(LARGURA // 2, 170)))
+
             janela.blit(resultado, resultado.get_rect(center=(LARGURA // 2, 240)))
+
+            janela.blit(img_inicio, botao_inicio)
 
             pygame.display.update()
             continue
+
 
         teclas = pygame.key.get_pressed()
 
@@ -520,6 +595,15 @@ def fase_facil(janela):
             if pterodatilo.rect.right < 0:
                 pterodatilo.kill()
 
+        linha_chegada.rect.x -= velocidade_fase
+
+
+        if linha_chegada.rect.centerx <= player.rect.centerx:
+            return tela_final_facil(janela, pontos, vidas)
+
+
+
+
         colisao_pedra = pygame.sprite.spritecollide(
             player, all_pedras, True, pygame.sprite.collide_mask
         )
@@ -542,6 +626,9 @@ def fase_facil(janela):
         janela.blit(player.image, player.rect)
         all_pedras.draw(janela)
         all_pterodatilos.draw(janela)
+
+        janela.blit(linha_chegada.image, linha_chegada.rect)
+
 
         texto_pontos = fonte_tex.render(f"Pontos: {pontos}", True, (255, 255, 255))
         janela.blit(texto_pontos, (20, 20))
