@@ -677,6 +677,51 @@ def fase_media(janela):
 
                 elif evento.key in [pygame.K_DOWN, pygame.K_s]:
                     player.agachado = False
+                    
+        if resultado is not None:
+            if canal is None or not canal.get_busy():
+                if resultado == "venceu":
+                    tela_final(janela, pontos, pontos_moedas, vidas)
+                    return "venceu"
+
+                else:
+                    return tela_game_over(janela, pontos)
+
+            continue
+
+        if keydown:
+            player.jump()
+
+        # Ativa somente ao passar pela faixa com os pes no chao.
+        if player.rect.bottom == ALTURA - ALTURA_CHAO:
+            for faixa in list(all_faixas):
+                if (player.rect.right > faixa.rect.left
+                        and player.rect.left < faixa.rect.right):
+                    fim_bonus = agora + 3000
+
+                    # Continua desenhada, mas nao ativa novamente.
+                    all_faixas.remove(faixa)
+
+        deslocamento_extra = 0
+
+        if agora < fim_bonus:
+            # Aumento de 100%: adiciona a velocidade normal inteira.
+            fracao_extra += velocidade_normal * 1.0
+            deslocamento_extra = int(fracao_extra)
+            fracao_extra -= deslocamento_extra
+        else:
+            fracao_extra = 0.0
+
+        # Atualizacao normal das classes existentes.
+        all_sprites.update()
+
+        # Aceleracao adicional apenas dos elementos do cenario.
+        if deslocamento_extra > 0:
+            for sprite in all_sprites:
+                if sprite is not player:
+                    sprite.rect.x -= deslocamento_extra
+
+        velocidade = velocidade_normal + deslocamento_extra
 
 
 
