@@ -520,6 +520,71 @@ def fase_facil(janela):
 
     return "sair"
 
+def tela_final_media(janela,pontos,pontos_moedas,vidas):
+    img_fundo = pygame.image.load("Assets/Imgs/final_fase_medieval.png")
+    img_fundo = pygame.transform.scale(img_fundo, (LARGURA, ALTURA))
+    timer = pygame.time.Clock()
+    tela = True
+    fonte_titulo = pygame.font.Font("Assets/Fonts/PressStart2P.ttf",36)
+    fonte_info = pygame.font.Font("Assets/Fonts/PressStart2P.ttf",24)
+    texto_titulo = fonte_titulo.render(f"FASE CONCLUIDA!",True,(0,220,255))
+    texto_pontos = fonte_info.render(f"Pontos: {pontos}",True,(255,255,255))
+    texto_moedas = fonte_info.render(f"Moedas: {pontos_moedas//100}/5",True,(255,210,60))
+    texto_vidas = fonte_info.render(f"Pontos por vida: {(vidas)*500}  ",True,(255,0,0))
+    texto_final = fonte_info.render(f"Total de pontos: {((vidas)*500)+pontos}  ",True,(255,255,255))
+    
+
+    while tela:
+        timer.tick(30)
+        for evento in pygame.event.get():
+            if evento.type == pygame.QUIT:
+                tela = False
+
+        janela.blit(img_fundo,(0,0))
+        janela.blit(texto_titulo, (300,320))
+        janela.blit(texto_pontos,(370,420))
+        janela.blit(texto_moedas,(370,470))
+        janela.blit(texto_vidas,(370,520))
+        janela.blit(texto_final,(370,570))
+        pygame.display.update()
+
+
+def tela_game_over_media(janela,pontos):
+    img_game_over = pygame.image.load("Assets/Imgs/game_over_medieval.png")
+    img_game_over = pygame.transform.scale(img_game_over, (LARGURA,ALTURA)) 
+  
+    timer = pygame.time.Clock()
+    tela = True
+    fonte_titulo = pygame.font.Font("Assets/Fonts/PressStart2P.ttf",46)
+    fonte_info = pygame.font.Font("Assets/Fonts/PressStart2P.ttf",24)
+
+    texto_titulo = fonte_titulo.render(f"GAME OVER!",True,(255,0,0))
+    texto_tente = fonte_info.render(f"Tente novamente!",True,(255,255,255))
+    total_ponto = fonte_info.render(f"Total pontos: {pontos}",True,(255,255,255))
+
+    img_inicio = pygame.image.load("Assets/Imgs/botao_inicio.png").convert_alpha()
+    img_inicio = pygame.transform.scale(img_inicio, (100, 100))
+    botao_inicio = img_inicio.get_rect(center=(LARGURA // 2, 650))    
+
+    while tela:
+        timer.tick(30)
+        for evento in pygame.event.get():
+            if evento.type == pygame.QUIT:
+                tela = False
+            if evento.type == pygame.MOUSEBUTTONDOWN:
+                if evento.button == 1:
+                    if botao_inicio.collidepoint(evento.pos):
+                        return "inicio"
+
+        janela.blit(img_game_over,(0,0))
+        janela.blit(texto_titulo, (300,220))
+        janela.blit(texto_tente,(320,280))
+        janela.blit(total_ponto,(310,400))
+        janela.blit(img_inicio, botao_inicio)
+
+        pygame.display.update()
+
+
 def fase_media(janela):
     img_fundo = pygame.image.load("Assets/Imgs/fundo_medieval.png").convert()
     img_fundo = pygame.transform.scale(img_fundo, (LARGURA, ALTURA - ALTURA_CHAO))
@@ -552,9 +617,6 @@ def fase_media(janela):
     img_faixa = pygame.image.load("Assets/Imgs/faixa_runas.png").convert_alpha()
     img_faixa = pygame.transform.scale(img_faixa, (180, 16))
 
-    img_vida = pygame.image.load("Assets/Imgs/vida_retro.png").convert_alpha()
-    img_vida = pygame.transform.scale(img_vida, (LARGURA_ESCUDO, ALTURA_ESCUDO))
-
     img_moeda = pygame.image.load("Assets/Imgs/moeda_ouro.png").convert_alpha()
     img_moeda = pygame.transform.scale(img_moeda, (50, 50))
 
@@ -567,9 +629,6 @@ def fase_media(janela):
     som_morte = pygame.mixer.Sound("Assets/Sons/morte.wav")
     som_morte.set_volume(0.5)
 
-    som_vida = pygame.mixer.Sound("Assets/Sons/coleta_vida.wav")
-    som_vida.set_volume(0.7)
-
     som_moeda = pygame.mixer.Sound("Assets/Sons/coleta_moeda_v2.wav")
     som_moeda.set_volume(0.7)
 
@@ -581,7 +640,6 @@ def fase_media(janela):
     all_sprites = pygame.sprite.Group()
     all_espinhos = pygame.sprite.Group()
     all_canos = pygame.sprite.Group()
-    all_vidas = pygame.sprite.Group()
     all_coins = pygame.sprite.Group()
     all_faixas = pygame.sprite.Group()
 
@@ -616,10 +674,6 @@ def fase_media(janela):
         all_sprites.add(faixa)
         all_faixas.add(faixa)
 
-    vida = Vida(img_vida, 9550)
-    all_sprites.add(vida)
-    all_vidas.add(vida)
-
     for x in [1550, 5650, 9950, 15150, 20350]:
         moeda = Moeda(img_moeda, x, ALTURA - ALTURA_CHAO - 75)
         all_sprites.add(moeda)
@@ -629,6 +683,7 @@ def fase_media(janela):
     all_sprites.add(linha_chegada)
 
     fonte = pygame.font.Font("Assets/Fonts/PressStart2P.ttf", 24)
+    fonte_vidas = pygame.font.Font("Assets/Fonts/PressStart2P.ttf", 36)
     fonte_bonus = pygame.font.Font("Assets/Fonts/PressStart2P.ttf", 16)
 
     pygame.mixer.music.load("Assets/Sons/musica_fundo.wav")
@@ -681,11 +736,11 @@ def fase_media(janela):
         if resultado is not None:
             if canal is None or not canal.get_busy():
                 if resultado == "venceu":
-                    tela_final(janela, pontos, pontos_moedas, vidas)
+                    tela_final_media(janela, pontos, pontos_moedas, vidas)
                     return "venceu"
 
                 else:
-                    return tela_game_over(janela, pontos)
+                    return tela_game_over_media(janela, pontos)
 
             continue
 
@@ -727,8 +782,6 @@ def fase_media(janela):
 
         colisao_canos = pygame.sprite.spritecollide(player, all_canos, True, pygame.sprite.collide_mask)
 
-        colisao_vidas = pygame.sprite.spritecollide(player, all_vidas, True, pygame.sprite.collide_mask)
-
         colisao_moedas = pygame.sprite.spritecollide(player, all_coins, True, pygame.sprite.collide_mask)
 
         if colisao_espinhos or colisao_canos:
@@ -736,10 +789,6 @@ def fase_media(janela):
 
             if vidas > 0:
                 som_batida.play()
-
-        if colisao_vidas:
-            vidas += len(colisao_vidas)
-            som_vida.play()
 
         if colisao_moedas:
             pontos_moedas += 100 * len(colisao_moedas)
@@ -769,8 +818,8 @@ def fase_media(janela):
             f"Pontos: {pontos}", True, (255, 255, 255)
         )
 
-        texto_vidas = fonte.render(
-            f"Vidas: {max(0, vidas)}", True, (255, 255, 255)
+        texto_vidas = fonte_vidas.render(
+            "♥" * max(0, vidas), True, (255, 0, 0)
         )
 
         janela.blit(texto_pontos, (20, 20))
