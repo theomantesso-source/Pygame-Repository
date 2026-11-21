@@ -677,7 +677,7 @@ def fase_media(janela):
 
                 elif evento.key in [pygame.K_DOWN, pygame.K_s]:
                     player.agachado = False
-                    
+
         if resultado is not None:
             if canal is None or not canal.get_busy():
                 if resultado == "venceu":
@@ -722,6 +722,36 @@ def fase_media(janela):
                     sprite.rect.x -= deslocamento_extra
 
         velocidade = velocidade_normal + deslocamento_extra
+
+        colisao_espinhos = pygame.sprite.spritecollide(player, all_espinhos, True, pygame.sprite.collide_mask)
+
+        colisao_canos = pygame.sprite.spritecollide(player, all_canos, True, pygame.sprite.collide_mask)
+
+        colisao_vidas = pygame.sprite.spritecollide(player, all_vidas, True, pygame.sprite.collide_mask)
+
+        colisao_moedas = pygame.sprite.spritecollide(player, all_coins, True, pygame.sprite.collide_mask)
+
+        if colisao_espinhos or colisao_canos:
+            vidas -= 1
+
+            if vidas > 0:
+                som_batida.play()
+
+        if colisao_vidas:
+            vidas += len(colisao_vidas)
+            som_vida.play()
+
+        if colisao_moedas:
+            pontos_moedas += 100 * len(colisao_moedas)
+            som_moeda.play()
+
+        distancia_percorrida += velocidade
+        pontos = distancia_percorrida // 10 + pontos_moedas
+
+        deslocamento_chao -= velocidade
+
+        if deslocamento_chao <= -LARGURA_BLOCO_CHAO:
+            deslocamento_chao += LARGURA_BLOCO_CHAO
 
 
 
