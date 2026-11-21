@@ -466,6 +466,10 @@ def fase_facil(janela):
     som_morte = pygame.mixer.Sound("Assets/Sons/morte.wav")
     som_morte.set_volume(0.5)
 
+    som_vitoria = pygame.mixer.Sound("Assets/Sons/vitoria.wav")
+    som_vitoria.set_volume(0.7)
+
+
 
 
     pygame.mixer.music.load("Assets/Sons/musica_fundo.wav")
@@ -534,6 +538,7 @@ def fase_facil(janela):
 
 
     perdeu = False
+    vencendo = False
     vidas = 2
 
     distancia_percorrida = 0
@@ -562,8 +567,16 @@ def fase_facil(janela):
         if not rodando:
             break
 
+
         if perdeu:
+            if canal_morte.get_busy():
+                continue
+
             janela.blit(img_game_over, (0, 0))
+        
+        
+
+
 
             titulo = fonte_titulo.render("GAME OVER!", True, (255, 0, 0))
             mensagem = fonte_texto.render("Tente novamente!", True, (255, 255, 255))
@@ -579,6 +592,11 @@ def fase_facil(janela):
             pygame.display.update()
             continue
 
+        if vencendo:
+                    if canal_vitoria.get_busy():
+                        continue
+        
+                    return tela_final_facil(janela, pontos, vidas)
 
         teclas = pygame.key.get_pressed()
 
@@ -616,7 +634,9 @@ def fase_facil(janela):
 
         if linha_chegada.rect.centerx <= player.rect.centerx:
             pygame.mixer.music.stop()
-            return tela_final_facil(janela, pontos, vidas)
+            canal_vitoria = som_vitoria.play()
+            vencendo = True            
+            continue
 
 
 
@@ -637,7 +657,7 @@ def fase_facil(janela):
 
             if vidas == 0:
                 pygame.mixer.music.stop()
-                som_morte.play()
+                canal_morte = som_morte.play()
                 perdeu = True
 
         janela.blit(img_fundo, (0, 0))
