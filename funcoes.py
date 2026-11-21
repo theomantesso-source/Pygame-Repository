@@ -651,5 +651,32 @@ def fase_media(janela):
     resultado = None
     canal = None
 
+    while True:
+        relogio.tick(30)
+        agora = pygame.time.get_ticks()
+
+        for evento in pygame.event.get():
+            if evento.type == pygame.QUIT:
+                pygame.mixer.music.stop()
+                return "sair"
+
+            if evento.type == pygame.KEYDOWN:
+                if evento.key in [
+                    pygame.K_UP, pygame.K_SPACE, pygame.K_w
+                ]:
+                    keydown = True
+
+                elif evento.key in [pygame.K_DOWN, pygame.K_s]:
+                    player.agachar()
+
+            if evento.type == pygame.KEYUP:
+                if evento.key in [
+                    pygame.K_UP, pygame.K_SPACE, pygame.K_w
+                ]:
+                    keydown = False
+
+                elif evento.key in [pygame.K_DOWN, pygame.K_s]:
+                    player.agachado = False
+
 
 
