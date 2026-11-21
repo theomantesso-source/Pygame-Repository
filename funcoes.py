@@ -372,7 +372,7 @@ def fase_dificil(janela):
 def fase_facil(janela):
     relogio = pygame.time.Clock()
     rodando = True
-
+    velocidade_fase = 10
 
     img_fundo = pygame.image.load("Assets/Imgs/fundo_jurassico.png").convert()
     img_fundo = pygame.transform.scale(img_fundo, (LARGURA, ALTURA - ALTURA_CHAO))
@@ -420,7 +420,12 @@ def fase_facil(janela):
 
     all_pedras = pygame.sprite.Group()
 
-    posicoes_pedras = [700, 750, 1600, 1800, 2000, 2050, 2500, 2700, 3150]
+    posicoes_pedras = [
+    905, 1715, 2720, 3320, 3605,
+    4280, 5285, 6065, 6305, 7115,
+    8105, 8735, 9005, 9755, 10685,
+    11465, 11705, 12500, 13505, 14135
+    ]
 
     for x in posicoes_pedras:
         pedra = Espinho(img_pedra, x)
@@ -431,7 +436,14 @@ def fase_facil(janela):
 
     all_pterodatilos = pygame.sprite.Group()
 
-    posicoes_pterodatilos = [3900]
+    posicoes_pterodatilos = [
+    1553, 1728, 2489, 2840, 3016,
+    3835, 5044, 5862, 6018, 6350,
+    7208, 7364, 8554, 8710, 9528,
+    9860, 10016, 10835, 12102, 12844,
+    13038, 13370, 14208, 14364, 15593,
+    15749, 16529, 16880, 17036, 17855
+    ]
 
     for x in posicoes_pterodatilos:
         pterodatilo = Drone(img_pterodatilo, x)
@@ -487,16 +499,26 @@ def fase_facil(janela):
         else:
             player.agachado = False
 
-        deslocamento_chao -= 15
-        distancia_percorrida += 15
+        deslocamento_chao -= velocidade_fase
+        distancia_percorrida += velocidade_fase
+
         pontos = distancia_percorrida // 10 + pontos_moedas
 
         if deslocamento_chao <= -330:
             deslocamento_chao = 0
 
         player.update()
-        all_pedras.update()
-        all_pterodatilos.update()
+        for pedra in all_pedras:
+            pedra.rect.x -= velocidade_fase
+
+            if pedra.rect.right < 0:
+                pedra.kill()
+
+        for pterodatilo in all_pterodatilos:
+            pterodatilo.rect.x -= velocidade_fase + 3
+
+            if pterodatilo.rect.right < 0:
+                pterodatilo.kill()
 
         colisao_pedra = pygame.sprite.spritecollide(
             player, all_pedras, True, pygame.sprite.collide_mask
