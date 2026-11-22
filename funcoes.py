@@ -15,20 +15,25 @@ def tela_final(janela,pontos,pontos_moedas,vidas):
     texto_vidas = fonte_info.render(f"Pontos por vida: {(vidas)*500}  ",True,(255,0,0))
     texto_final = fonte_info.render(f"Total de pontos: {((vidas)*500)+pontos}  ",True,(255,255,255))
     
-
+    
     img_inicio = pygame.image.load("Assets/Imgs/botao_inicio.png").convert_alpha()
     img_inicio = pygame.transform.scale(img_inicio, (100, 100))
     botao_inicio = img_inicio.get_rect(center=(LARGURA // 2, 650))
+
+
 
     while tela:
         timer.tick(30)
         for evento in pygame.event.get():
             if evento.type == pygame.QUIT:
-                tela = False
+                return "sair"
+
             if evento.type == pygame.MOUSEBUTTONDOWN:
                 if evento.button == 1:
                     if botao_inicio.collidepoint(evento.pos):
                         return "inicio"
+
+
 
         janela.blit(img_fundo,(0,0))
         janela.blit(texto_titulo, (300,320))
@@ -42,6 +47,7 @@ def tela_final(janela,pontos,pontos_moedas,vidas):
 def tela_game_over(janela,pontos):
     img_game_over = pygame.image.load("Assets/Imgs/game_over.png")
     img_game_over = pygame.transform.scale(img_game_over, (LARGURA,ALTURA)) 
+
   
     timer = pygame.time.Clock()
     tela = True
@@ -369,10 +375,59 @@ def fase_dificil(janela):
     return "sair"
 
 
-def fase_facil(janela):
-    relogio = pygame.time.Clock()
+
+def tela_final_facil(janela, pontos, vidas):
     rodando = True
 
+    img_final = pygame.image.load("Assets/Imgs/final_homem_das_cavernas.png").convert()
+    img_final = pygame.transform.scale(img_final, (LARGURA, ALTURA))
+
+    img_inicio = pygame.image.load("Assets/Imgs/Botao_inicio_pre_historico.png").convert_alpha()
+    img_inicio = pygame.transform.scale(img_inicio, (90, 90))
+    botao_inicio = img_inicio.get_rect(center=(420, 620))
+
+
+    bonus_vidas = vidas * 500
+    total = pontos + bonus_vidas
+
+    fonte_valor = pygame.font.Font("Assets/Fonts/PressStart2P.ttf", 22)
+    fonte_total = pygame.font.Font("Assets/Fonts/PressStart2P.ttf", 24)
+
+    while rodando:
+        for evento in pygame.event.get():
+            if evento.type == pygame.QUIT:
+                return "sair"
+
+            if evento.type == pygame.MOUSEBUTTONDOWN:
+                if evento.button == 1:
+                    if botao_inicio.collidepoint(evento.pos):
+                        return "inicio"
+
+        janela.blit(img_final, (0, 0))
+
+        texto_pontos = fonte_valor.render(f"{pontos}", True, (255, 255, 255))
+        texto_vidas = fonte_valor.render(f"{vidas}", True, (255, 255, 255))
+        texto_bonus = fonte_valor.render(f"{bonus_vidas}", True, (255, 220, 0))
+        texto_total = fonte_total.render(f"{total}", True, (255, 255, 255))
+
+        
+
+        janela.blit(texto_pontos, texto_pontos.get_rect(midright=(650, 250)))
+        janela.blit(texto_vidas, texto_vidas.get_rect(midright=(650, 305)))
+        janela.blit(texto_bonus, texto_bonus.get_rect(midright=(650, 360)))
+        janela.blit(texto_total, texto_total.get_rect(midright=(650, 455)))
+
+
+        janela.blit(img_inicio, botao_inicio)
+
+        pygame.display.update()
+
+
+
+def fase_facil(janela):     
+    relogio = pygame.time.Clock()
+    rodando = True
+    velocidade_fase = 10
 
     img_fundo = pygame.image.load("Assets/Imgs/fundo_jurassico.png").convert()
     img_fundo = pygame.transform.scale(img_fundo, (LARGURA, ALTURA - ALTURA_CHAO))
@@ -406,6 +461,33 @@ def fase_facil(janela):
     img_agachado = quadro
 
     som_pulo = pygame.mixer.Sound("Assets/Sons/som_pulo.wav")
+    som_pulo.set_volume(0.3)
+
+
+    som_batida = pygame.mixer.Sound("Assets/Sons/batida_quebra.wav")
+    som_batida.set_volume(0.5)
+
+    som_morte = pygame.mixer.Sound("Assets/Sons/morte.wav")
+    som_morte.set_volume(0.5)
+
+    som_vitoria = pygame.mixer.Sound("Assets/Sons/vitoria.wav")
+    som_vitoria.set_volume(0.7)
+
+    som_vida = pygame.mixer.Sound("Assets/Sons/coleta_vida.wav")
+    som_vida.set_volume(0.7)
+
+    som_moeda = pygame.mixer.Sound("Assets/Sons/coleta_moeda_v2.wav")
+    som_moeda.set_volume(0.7)
+
+
+
+
+
+
+    pygame.mixer.music.load("Assets/Sons/musica_fundo.wav")
+    pygame.mixer.music.set_volume(0.7)
+    pygame.mixer.music.play(-1)
+
 
     player = jogador(imagem_robo_andando, img_pulo, img_agachado, som_pulo)
 
@@ -420,7 +502,12 @@ def fase_facil(janela):
 
     all_pedras = pygame.sprite.Group()
 
-    posicoes_pedras = [700, 750, 1600, 1800, 2000, 2050, 2500, 2700, 3150]
+    posicoes_pedras = [
+    905, 1715, 2720, 3320, 3605,
+    4280, 5285, 6065, 6305, 7115,
+    8105, 8735, 9005, 9755, 10685,
+    11465, 11705, 12500, 13505, 14135
+    ]
 
     for x in posicoes_pedras:
         pedra = Espinho(img_pedra, x)
@@ -431,17 +518,60 @@ def fase_facil(janela):
 
     all_pterodatilos = pygame.sprite.Group()
 
-    posicoes_pterodatilos = [3900]
+    posicoes_pterodatilos = [
+    1553, 1728, 2489, 2840, 3016,
+    3835, 5044, 5862, 6018, 6350,
+    7208, 7364, 8554, 8710, 9528,
+    9860, 10016, 10835, 12102, 12844,
+    13038, 13370, 14208, 14364, 15593,
+    15749, 16529, 16880, 17036, 17855
+    ]
 
     for x in posicoes_pterodatilos:
         pterodatilo = Drone(img_pterodatilo, x)
         pterodatilo.rect.bottom = ALTURA - ALTURA_CHAO - 72
         all_pterodatilos.add(pterodatilo)
 
+
+    img_vida = pygame.image.load("Assets/Imgs/vida_retro.png").convert_alpha()
+    img_vida = pygame.transform.scale(img_vida, (LARGURA_ESCUDO, ALTURA_ESCUDO))
+
+    all_vidas = pygame.sprite.Group()
+
+    vida = Vida(img_vida, 3463)
+    vida.rect.bottom = ALTURA - ALTURA_CHAO - 50
+    all_vidas.add(vida)
+
+
+    img_moeda = pygame.image.load("Assets/Imgs/moeda_ouro.png").convert_alpha()
+    img_moeda = pygame.transform.scale(img_moeda, (50, 50))
+
+    all_moedas = pygame.sprite.Group()
+
+    moeda = Moeda(img_moeda, 2100, ALTURA - ALTURA_CHAO - 60)
+    all_moedas.add(moeda)
+
+    moeda = Moeda(img_moeda, 5285, ALTURA - ALTURA_CHAO - 120)
+    all_moedas.add(moeda)
+
+    
+    img_chegada = pygame.image.load("Assets/Imgs/Chegada_Pre_Historica.png").convert_alpha()
+    img_chegada = pygame.transform.scale(img_chegada, (180, 200))
+
+    linha_chegada = Linha_chegada(img_chegada, 14500)
+
+
     img_game_over = pygame.image.load("Assets/Imgs/game_over_TRex.png").convert()
     img_game_over = pygame.transform.scale(img_game_over, (LARGURA, ALTURA))
 
+
+    img_inicio = pygame.image.load("Assets/Imgs/Botao_inicio_pre_historico.png").convert_alpha()
+    img_inicio = pygame.transform.scale(img_inicio, (100, 100))
+    botao_inicio = img_inicio.get_rect(center=(LARGURA // 2, 600))
+
+
     perdeu = False
+    vencendo = False
     vidas = 2
 
     distancia_percorrida = 0
@@ -456,15 +586,30 @@ def fase_facil(janela):
     while rodando:
         relogio.tick(30)
 
+
         for evento in pygame.event.get():
             if evento.type == pygame.QUIT:
                 rodando = False
 
+            if perdeu and evento.type == pygame.MOUSEBUTTONDOWN:
+                if evento.button == 1:
+                    if botao_inicio.collidepoint(evento.pos):
+                        return "inicio"
+
+
         if not rodando:
             break
 
+
         if perdeu:
+            if canal_morte.get_busy():
+                continue
+
             janela.blit(img_game_over, (0, 0))
+        
+        
+
+
 
             titulo = fonte_titulo.render("GAME OVER!", True, (255, 0, 0))
             mensagem = fonte_texto.render("Tente novamente!", True, (255, 255, 255))
@@ -472,10 +617,19 @@ def fase_facil(janela):
 
             janela.blit(titulo, titulo.get_rect(center=(LARGURA // 2, 100)))
             janela.blit(mensagem, mensagem.get_rect(center=(LARGURA // 2, 170)))
+
             janela.blit(resultado, resultado.get_rect(center=(LARGURA // 2, 240)))
+
+            janela.blit(img_inicio, botao_inicio)
 
             pygame.display.update()
             continue
+
+        if vencendo:
+                    if canal_vitoria.get_busy():
+                        continue
+        
+                    return tela_final_facil(janela, pontos, vidas)
 
         teclas = pygame.key.get_pressed()
 
@@ -487,16 +641,54 @@ def fase_facil(janela):
         else:
             player.agachado = False
 
-        deslocamento_chao -= 15
-        distancia_percorrida += 15
+        deslocamento_chao -= velocidade_fase
+        distancia_percorrida += velocidade_fase
+
         pontos = distancia_percorrida // 10 + pontos_moedas
 
         if deslocamento_chao <= -330:
             deslocamento_chao = 0
 
         player.update()
-        all_pedras.update()
-        all_pterodatilos.update()
+        for pedra in all_pedras:
+            pedra.rect.x -= velocidade_fase
+
+            if pedra.rect.right < 0:
+                pedra.kill()
+
+        for pterodatilo in all_pterodatilos:
+            pterodatilo.rect.x -= velocidade_fase + 3
+
+            if pterodatilo.rect.right < 0:
+                pterodatilo.kill()
+
+
+        for vida in all_vidas:
+            vida.rect.x -= velocidade_fase
+
+            if vida.rect.right < 0:
+                vida.kill()
+
+        
+        for moeda in all_moedas:
+            moeda.rect.x -= velocidade_fase
+
+            if moeda.rect.right < 0:
+                moeda.kill()
+
+
+
+        linha_chegada.rect.x -= velocidade_fase
+
+
+        if linha_chegada.rect.centerx <= player.rect.centerx:
+            pygame.mixer.music.stop()
+            canal_vitoria = som_vitoria.play()
+            vencendo = True            
+            continue
+
+
+
 
         colisao_pedra = pygame.sprite.spritecollide(
             player, all_pedras, True, pygame.sprite.collide_mask
@@ -506,10 +698,34 @@ def fase_facil(janela):
             player, all_pterodatilos, True, pygame.sprite.collide_mask
         )
 
+
+        colisao_vida = pygame.sprite.spritecollide(
+            player, all_vidas, True, pygame.sprite.collide_mask
+        )
+
+        if colisao_vida:
+            vidas += 1
+            som_vida.play()
+
+        colisao_moeda = pygame.sprite.spritecollide(
+            player, all_moedas, True, pygame.sprite.collide_mask
+        )
+
+        if colisao_moeda:
+            pontos_moedas += 100 * len(colisao_moeda)
+            pontos += 100 * len(colisao_moeda)
+            som_moeda.play()
+
+
         if colisao_pedra or colisao_pterodatilo:
             vidas -= 1
 
+            if vidas > 0:
+                som_batida.play()
+
             if vidas == 0:
+                pygame.mixer.music.stop()
+                canal_morte = som_morte.play()
                 perdeu = True
 
         janela.blit(img_fundo, (0, 0))
@@ -520,6 +736,16 @@ def fase_facil(janela):
         janela.blit(player.image, player.rect)
         all_pedras.draw(janela)
         all_pterodatilos.draw(janela)
+
+        all_vidas.draw(janela)
+
+
+        all_moedas.draw(janela)
+
+
+
+        janela.blit(linha_chegada.image, linha_chegada.rect)
+
 
         texto_pontos = fonte_tex.render(f"Pontos: {pontos}", True, (255, 255, 255))
         janela.blit(texto_pontos, (20, 20))
