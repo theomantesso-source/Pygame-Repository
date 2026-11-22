@@ -15,11 +15,11 @@ def tela_final(janela,pontos,pontos_moedas,vidas):
     texto_vidas = fonte_info.render(f"Pontos por vida: {(vidas)*500}  ",True,(255,0,0))
     texto_final = fonte_info.render(f"Total de pontos: {((vidas)*500)+pontos}  ",True,(255,255,255))
     
-
-
-    img_inicio = pygame.image.load("Assets/Imgs/Botao_inicio_pre_historico.png").convert_alpha()
+    
+    img_inicio = pygame.image.load("Assets/Imgs/botao_inicio.png").convert_alpha()
     img_inicio = pygame.transform.scale(img_inicio, (100, 100))
-    botao_inicio = img_inicio.get_rect(center=(LARGURA // 2, 600))
+    botao_inicio = img_inicio.get_rect(center=(LARGURA // 2, 650))
+
 
 
     while tela:
