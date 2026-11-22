@@ -377,29 +377,23 @@ def fase_dificil(janela):
 
 
 def tela_final_facil(janela, pontos, vidas):
-    
-    img_fundo = pygame.image.load("Assets/Imgs/final_homem_das_cavernas.png").convert()
+    rodando = True
 
-    img_fundo = pygame.transform.scale(img_fundo, (LARGURA, ALTURA))
+    img_final = pygame.image.load("Assets/Imgs/final_homem_das_cavernas.png").convert()
+    img_final = pygame.transform.scale(img_final, (LARGURA, ALTURA))
 
-    
     img_inicio = pygame.image.load("Assets/Imgs/Botao_inicio_pre_historico.png").convert_alpha()
-    img_inicio = pygame.transform.scale(img_inicio, (100, 100))
-    botao_inicio = img_inicio.get_rect(center=(LARGURA // 2, 580))
-
-    fonte_titulo = pygame.font.Font("Assets/Fonts/PressStart2P.ttf", 36)
-    fonte_texto = pygame.font.Font("Assets/Fonts/PressStart2P.ttf", 24)
+    img_inicio = pygame.transform.scale(img_inicio, (90, 90))
+    botao_inicio = img_inicio.get_rect(center=(420, 620))
 
 
     bonus_vidas = vidas * 500
-    pontos_finais = pontos + bonus_vidas
+    total = pontos + bonus_vidas
 
+    fonte_valor = pygame.font.Font("Assets/Fonts/PressStart2P.ttf", 22)
+    fonte_total = pygame.font.Font("Assets/Fonts/PressStart2P.ttf", 24)
 
-    relogio = pygame.time.Clock()
-
-    while True:
-        relogio.tick(30)
-
+    while rodando:
         for evento in pygame.event.get():
             if evento.type == pygame.QUIT:
                 return "sair"
@@ -409,19 +403,20 @@ def tela_final_facil(janela, pontos, vidas):
                     if botao_inicio.collidepoint(evento.pos):
                         return "inicio"
 
-        janela.blit(img_fundo, (0, 0))
+        janela.blit(img_final, (0, 0))
 
-        texto_pontos = fonte_texto.render(f"Pontos: {pontos}", True, (255, 255, 255))
-        texto_vidas = fonte_texto.render(f"Vidas restantes: {vidas}", True, (255, 255, 255))
-        texto_bonus = fonte_texto.render(f"Bonus de vidas: {bonus_vidas}", True, (255, 220, 0))
-        texto_total = fonte_texto.render(f"Total de pontos: {pontos_finais}", True, (255, 255, 255))
+        texto_pontos = fonte_valor.render(f"{pontos}", True, (255, 255, 255))
+        texto_vidas = fonte_valor.render(f"{vidas}", True, (255, 255, 255))
+        texto_bonus = fonte_valor.render(f"{bonus_vidas}", True, (255, 220, 0))
+        texto_total = fonte_total.render(f"{total}", True, (255, 255, 255))
 
+        
 
-        titulo = fonte_titulo.render("FASE CONCLUIDA!", True, (255, 220, 0))
+        janela.blit(texto_pontos, texto_pontos.get_rect(midright=(650, 250)))
+        janela.blit(texto_vidas, texto_vidas.get_rect(midright=(650, 305)))
+        janela.blit(texto_bonus, texto_bonus.get_rect(midright=(650, 360)))
+        janela.blit(texto_total, texto_total.get_rect(midright=(650, 455)))
 
-        janela.blit(titulo, titulo.get_rect(center=(LARGURA // 2, 220)))
-        janela.blit(texto_pontos, texto_pontos.get_rect(center=(LARGURA // 2, 320)))
-        janela.blit(texto_vidas, texto_vidas.get_rect(center=(LARGURA // 2, 380)))
 
         janela.blit(img_inicio, botao_inicio)
 
