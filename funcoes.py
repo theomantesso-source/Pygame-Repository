@@ -11,7 +11,7 @@ def tela_final(janela,pontos,pontos_moedas,vidas):
     fonte_info = pygame.font.Font("Assets/Fonts/PressStart2P.ttf",24)
     texto_titulo = fonte_titulo.render(f"FASE CONCLUIDA!",True,(0,220,255))
     texto_pontos = fonte_info.render(f"Pontos: {pontos}",True,(255,255,255))
-    texto_moedas = fonte_info.render(f"Moedas: {pontos_moedas//100}/5",True,(255,210,60))
+    texto_moedas = fonte_info.render(f"Moedas: {pontos_moedas//200}/5",True,(255,210,60))
     texto_vidas = fonte_info.render(f"Pontos por vida: {(vidas)*500}  ",True,(255,0,0))
     texto_final = fonte_info.render(f"Total de pontos: {((vidas)*500)+pontos}  ",True,(255,255,255))
     
@@ -253,6 +253,7 @@ def fase_dificil(janela):
     life = 0
     distancia_percorrida = 0
     pontos = 0
+    moedas = 0 
     fonte_tex = pygame.font.Font("Assets/Fonts/PressStart2P.ttf", 24)
     pygame.mixer.music.load("Assets/Sons/musica_fundo.wav")
     pygame.mixer.music.set_volume(1)
